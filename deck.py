@@ -8,6 +8,8 @@ class Card:
     def __init__(self, suit, rank):
         self.suit = suit
         self.rank = rank
+    def __str__(self):
+        return f'{self.rank}{self.suit}'
         
 class Deck: 
     def __init__(self):
@@ -17,4 +19,12 @@ class Deck:
                 self.cards.append(Card(suit, rank))
         random.shuffle(self.cards)
         
-    def 
+    def deal(self, amount):
+        dealt_cards = []
+        for _ in range(amount):
+            dealt_cards.append(self.cards.pop())
+        return dealt_cards
+    
+testDeck = Deck()
+for card in testDeck.deal(5):
+    print(card)
