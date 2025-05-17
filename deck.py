@@ -1,30 +1,35 @@
 import random
 
-RANKS = '2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K, A'.split()
-SUITS = ['sp', 'he', 'di', 'cl']
+RANKS = "2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K, A".split()
+SUITS = ["sp", "he", "di", "cl"]
 
 
 class Card:
     def __init__(self, suit, rank):
         self.suit = suit
         self.rank = rank
+
     def __str__(self):
-        return f'{self.rank}{self.suit}'
-        
-class Deck: 
+        return f"{self.rank}{self.suit}"
+
+
+class Deck:
     def __init__(self):
         self.cards = []
         for suit in SUITS:
             for rank in RANKS:
                 self.cards.append(Card(suit, rank))
-        random.shuffle(self.cards)
-        
-    def deal(self, amount):
+        self.shuffle()
+
+    def deal(self, amount=1):
         dealt_cards = []
         for _ in range(amount):
             dealt_cards.append(self.cards.pop())
         return dealt_cards
-    
+
+    def shuffle(self):
+        random.shuffle(self.cards)
+
+
 testDeck = Deck()
-for card in testDeck.deal(5):
-    print(card)
+print(len(testDeck.cards))
