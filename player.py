@@ -24,9 +24,10 @@ class Player:
 
         self.chips -= bet_amount
         self.stake += bet_amount
+        return bet_amount
 
     def take_turn(self, current_stake):
-        print("1. Fold \n 2. Check \n 3. Raise")
+        print("1. Fold \n 2. Check/Call \n 3. Raise")
         player_choice = input()
         match player_choice:
             case "1":
@@ -36,9 +37,13 @@ class Player:
                 if current_stake > self.stake:
                     self.bet(current_stake - self.stake)
             case "3":
-                print("Enter amount to raise")
-                raise_amount = input()
-                self.bet(raise_amount)
+                while True:
+                    print("Enter bet amount:")
+                    raise_amount = int(input())
+                    if raise_amount > self.chips:
+                        print("You don't have enough chips")
+                        continue
+                    self.bet((current_stake + raise_amount) - self.stake)
 
 
 class CPUPlayer(Player):
@@ -54,4 +59,4 @@ class CPUPlayer(Player):
             case "3":
                 print("Enter amount to raise")
                 raise_amount = random.randrange(10, 100, 5)
-                self.bet(raise_amount)
+                self.bet((current_stake + raise_amount) - self.stake)
