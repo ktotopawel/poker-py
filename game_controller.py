@@ -1,5 +1,5 @@
 from deck import Deck
-from player import Player
+from player import Player, CPUPlayer
 
 
 class PokerGame:
@@ -18,7 +18,7 @@ class PokerGame:
     def add_cpu(self, cpu_num):
         cpu_arr = []
         for i in range(cpu_num):
-            cpu_arr.append(Player(name=f"CPU{i}"))
+            cpu_arr.append(CPUPlayer(name=f"CPU{i}"))
         return cpu_arr
 
     def receive_bet(self, bet):
