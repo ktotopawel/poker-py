@@ -1,6 +1,6 @@
 import random
 
-RANKS = '2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K, A'.split()
+RANKS = '2, 3, 4, 5, 6, 7, 8, 9, 10, J, Q, K, A'.split(', ')
 SUITS = ['♠', '♥', '♦', '♦']
 
 
@@ -29,7 +29,12 @@ class Deck:
 
     def shuffle(self):
         random.shuffle(self.cards)
+        
+    def print_deck(self):
+        for card in self.cards:
+            print(card)
 
 
 testDeck = Deck()
 print(len(testDeck.cards))
+testDeck.print_deck()
