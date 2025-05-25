@@ -29,9 +29,9 @@ class PokerGame:
 
     def deal_cards(self):
         for current_player in self.all_players:
-            current_player.receive_cards(Deck.deal(1))
+            current_player.receive_cards(self.deck.deal(1))
         for current_player in self.all_players:
-            current_player.receive_cards(Deck.deal(1))
+            current_player.receive_cards(self.deck.deal(1))
 
     def betting_round(self, is_preflop=False):
         start_index = 0
@@ -39,7 +39,7 @@ class PokerGame:
         big_blind = 50
         small_blind = big_blind / 2
         players_acted = 0
-        
+
         for i, player in enumerate(self.all_players):
             if player.is_dealer:
                 start_index = (i + 1) % len(self.all_players)
@@ -47,30 +47,33 @@ class PokerGame:
 
         betting_order = self.all_players[start_index:] + self.all_players[:start_index]
 
+        if is_preflop:
+            self.all_players[start_index].bet(small_blind)
+            self.all_players[start_index + 1].bet(small_blind)
+            start_index = start_index + 2
+
         while not all_finished:
-            for i, player in enumerate(betting_order):
-                if player.is_folded or player.game_over:
-                    continue
-                
-                action_result = None
-                
-                if is_preflop:
-                    if i === 0:
-                        player.bet(small_blind)
-                        action_result = 'raised'
-                        continue
-                    elif i === 1:
-                        player.bet(big_blind)
-                        action_result = 'raised'
-                        continue
-                    
-                    self.current_stake = 50
-                    
-                action_result = player.take_turn(self.current_stake)
-                print(f'{player.name}: {action_result}')
-                
-                if player.stake > self.current_stake:
-                    self.current_stake = player.stake
-                    players_acted = 0
-                    
-                players_acted += 1
+            if players_acted == len(self.all_players) - 1:
+                all_finished = True
+
+    # biały kleszcz
+
+    def preflop(self):
+        self.deal_cards()
+        print(
+            f"All cards dealt. Your cards: {', '.join(str(card) for card in self.player.hand)}"
+        )
+        self.betting_round(True)
+
+    def flop(self):
+        self.deck.deal(1)
+        print("First card burned")
+        self.table_cards.extend(self.deck.deal(3))
+        print(f"Flop: {', '.join(str(card) for card in self.table_cards)}")
+
+        self.betting_round(False)
+
+
+testGame = PokerGame("test player", 1000, 2)
+testGame.preflop()
+testGame.flop()
