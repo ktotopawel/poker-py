@@ -1,4 +1,3 @@
-import random
 from treys import Evaluator
 
 from deck import Deck

@@ -15,6 +15,7 @@ class PokerGame:
         self.bank_chips = 0
         self.current_stake = 0
         self.big_blind = big_blind
+        self.is_preflop = False
 
     def add_cpu(self, cpu_num):
         cpu_arr = []
@@ -33,7 +34,7 @@ class PokerGame:
         for current_player in self.all_players:
             current_player.receive_cards(self.deck.deal(1))
 
-    def betting_round(self, is_preflop=False):
+    def betting_round(self):
         start_index = 0
         all_finished = False
         big_blind = 50
@@ -43,27 +44,34 @@ class PokerGame:
         for i, player in enumerate(self.all_players):
             if player.is_dealer:
                 start_index = (i + 1) % len(self.all_players)
+                if self.is_preflop:
+                    self.all_players[(start_index + 1) % len(self.all_players)].bet(small_blind)
+                    self.all_players[(start_index + 2) % len(self.all_players)].bet(big_blind)
+                    start_index = (start_index + 2) % len(self.all_players)
+                    self.current_stake = (big_blind)
                 break
 
         betting_order = self.all_players[start_index:] + self.all_players[:start_index]
 
-        if is_preflop:
-            self.all_players[start_index].bet(small_blind)
-            self.all_players[start_index + 1].bet(small_blind)
-            start_index = start_index + 2
-
         while not all_finished:
             if players_acted == len(self.all_players) - 1:
                 all_finished = True
+            for player in betting_order:
+                p_choice = player.take_turn(self.current_stake)
+                players_acted += 1
+                
+            
+            
 
     # biały kleszcz
 
     def preflop(self):
+        self.is_preflop = True
         self.deal_cards()
         print(
             f"All cards dealt. Your cards: {', '.join(str(card) for card in self.player.hand)}"
         )
-        self.betting_round(True)
+        self.betting_round()
 
     def flop(self):
         self.deck.deal(1)
@@ -71,7 +79,7 @@ class PokerGame:
         self.table_cards.extend(self.deck.deal(3))
         print(f"Flop: {', '.join(str(card) for card in self.table_cards)}")
 
-        self.betting_round(False)
+        self.betting_round()
 
 
 testGame = PokerGame("test player", 1000, 2)
