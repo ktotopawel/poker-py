@@ -29,7 +29,7 @@ class PokerGame:
         self.evaluator = Evaluator()
         self.phase = "waiting"
         self.round_number = 0
-        self.waiting_for_player - False
+        self.waiting_for_player = False
         self.last_round_result = None
         self.game_over = False
 
@@ -113,14 +113,14 @@ class PokerGame:
         self.deal_cards()
         self.phase = Phase.PREFLOP
         
-        result = self.start_betting_phase(Phase.PREFLOP)
+        result = self.start_betting_phase()
         return result
     
     def start_betting_phase(self):
         if self.phase == Phase.PREFLOP:
             self.handle_blinds()
             
-        return self.proccess_bots()
+        return self.process_bots()
             
     def handle_blinds(self):
         dealer_index = 0
@@ -130,8 +130,8 @@ class PokerGame:
             if p.is_dealer:
                 dealer_index = i
                 
-        small_blind_player = self.all_players[dealer_index+1]
-        big_blind_player = self.all_players[dealer_index+2]
+        small_blind_player = self.all_players[(dealer_index + 1) % len(self.all_players)]
+        big_blind_player = self.all_players[(dealer_index + 2) % len(self.all_players)]
         
         self.receive_bet(small_blind_player.bet(small_blind))
         self.receive_bet(big_blind_player.bet(self.big_blind))
@@ -144,7 +144,7 @@ class PokerGame:
             if p.is_dealer:
                 dealer_index = i
         
-        return self.all_players[dealer_index+1:] + self.all_players[:dealer_index+1]
+        return self.all_players[(dealer_index + 1):] + self.all_players[:(dealer_index + 1)]
         
     def process_bots(self):
         active_players = [p for p in self.all_players if not p.game_over and not p.is_folded]
@@ -165,7 +165,7 @@ class PokerGame:
                         "game_state": self.get_game_state()
                     }
                 
-                bot_action = player.recieve_bot_decision()
+                bot_action = self.receive_bot_decision()
                 if bot_action['action'] == 'raise':
                     self.receive_bet(player.bet(bot_action['amount']))
                     players_acted = {player}
@@ -176,7 +176,7 @@ class PokerGame:
         
         return self.proceed_to_next_phase()
     
-    def recieve_bot_decision(self, bot: CPUPlayer):
+    def receive_bot_decision(self, bot: CPUPlayer):
         decision = bot.bot_turn(self.table_cards, self.bank_chips, self.current_stake)
         
         action = decision['action']
@@ -192,12 +192,12 @@ class PokerGame:
     def proceed_to_next_phase(self):
         active_players = [p for p in self.all_players if not p.game_over and not p.is_folded]
         
-        if active_players <= 1:
+        if len(active_players) <= 1:
             return self.handle_end_of_round()
         
         if self.phase == Phase.PREFLOP:
             self.table_cards.extend(self.deck.deal(3))
-            self.phase == Phase.FLOP
+            self.phase = Phase.FLOP
             return self.start_betting_phase()
         
         elif self.phase == Phase.FLOP:
@@ -207,22 +207,22 @@ class PokerGame:
         
         elif self.phase == Phase.TURN:
             self.table_cards.extend(self.deck.deal(1))
-            self.phase == Phase.RIVER
+            self.phase = Phase.RIVER
             return self.start_betting_phase()
         
         elif self.phase == Phase.RIVER:
-            self.phase == Phase.SHOWDOWN
+            self.phase = Phase.SHOWDOWN
             return self.handle_showdown()
         
         
         return {"success": True, "game_state": self.get_game_state()}
     
     def handle_end_of_round(self):
-        self.phase == Phase.COMPLETE
+        self.phase = Phase.COMPLETE
         self.waiting_for_player = False
         
         in_game_players = [p for p in self.all_players if not p.game_over]
-        if len(active_players) <= 1:
+        if len(in_game_players) <= 1:
             self.game_over = True
             return {"success": True, "game_state": self.get_game_state()}
         else: 
@@ -243,9 +243,9 @@ class PokerGame:
         winner_data = min(final_scores, key=lambda x: x["score"])
         winner = winner_data['player']
         
-        winner_chips += self.bank_chips
+        winner.chips += self.bank_chips
         return {"success": True, "game_state": self.get_game_state()}
         
 if __name__ == "__main__":
     testGame = PokerGame("test player", 1000, 2)
-    testGame.start_game()
+    testGame.start_round()
