@@ -8,8 +8,7 @@ CORS(app)
 
 games = {}
 game_id = 0
-
-
+    
 @app.route("/api/game", methods=["POST"])
 def initGame():
     if not request.is_json:
@@ -44,21 +43,32 @@ def initGame():
         200,
     )
 
-
-@app.route("/api/game/<game_id>", methods=["GET"])
-def get_game_state(game_id):
-    try:
-        game_id = int(game_id)
-    except ValueError:
-        return jsonify({"error": "Invalid game_id"}), 400
+@app.route('api/game/<int:game_id>/start-round', methods=['GET'])
+def start_round(game_id):
     game = games.get(game_id)
     if not game:
         return jsonify({"error": "Game not found"}), 404
-
-    game_state = game.get_game_state()
-
-    return jsonify({"game_state": game_state})
-
+    
+    result = game.start_round()
+    return jsonify(
+        result
+    )
+    
+@app.route('/api/game/<int:game_id>/action', methods=['POST'])
+def player_action(game_id):
+    game = games.get(game_id)
+    
+    if not game:
+        return jsonify({"error": "Game not found"}), 404
+    
+    data = request.get_json()
+    action_type = data.get('action')
+    amount = data.get('amount', 0)
+    
+    result = game.player_action(action_type, amount)
+    return jsonify(result)
+    
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
