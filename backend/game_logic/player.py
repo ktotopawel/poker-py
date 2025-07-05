@@ -119,7 +119,8 @@ class CPUPlayer(Player):
         if len(current_table) == 0:
             if to_call <= self.chips * 0.1:
                 self.status = "call"
-                return {"action": "call"}
+                
+                return {"action": "call", "amount": to_call}
             else:
                 self.is_folded = True
                 self.status = "fold"
@@ -154,7 +155,7 @@ class CPUPlayer(Player):
                 return {"action": "raise", "amount": raise_amount}
             elif hand_strength > 0.5 or to_call <= self.chips * 0.05:
                 self.status = "call"
-                return {"action": "call"}
+                return {"action": "call", "amount": to_call}
             else:
                 self.is_folded = True
                 self.status = "fold"
@@ -162,7 +163,7 @@ class CPUPlayer(Player):
         else:
             if to_call <= self.chips * 0.1:
                 self.status = "call"
-                return {"action": "call"}
+                return {"action": "call", "amount": to_call}
             else:
                 self.is_folded = True
                 self.status = "fold"
