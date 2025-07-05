@@ -97,7 +97,7 @@ class CPUPlayer(Player):
     def __init__(self, name, chips=1000):
         super().__init__(name, chips)
         self.evaluator = Evaluator()
-        self.status = ''
+        self.status = ""
 
     def get_state(self):
         return {
@@ -106,34 +106,34 @@ class CPUPlayer(Player):
             "stake": self.stake,
             "is_dealer": self.is_dealer,
             "game_over": self.game_over,
-            "is_folded": self.is_folded
+            "is_folded": self.is_folded,
         }
 
     def bot_turn(self, current_table, pot, current_stake):
         to_call = current_stake - self.stake
 
         if to_call == 0:
-            self.status = 'check'
+            self.status = "check"
             return {"action": "check"}
 
         if len(current_table) == 0:
             if to_call <= self.chips * 0.1:
-                self.status = 'call'
+                self.status = "call"
                 return {"action": "call"}
             else:
                 self.is_folded = True
-                self.status = 'fold'
+                self.status = "fold"
                 return {"action": "fold"}
 
         if len(current_table) > 0:
             if len(self.hand) != 2:
                 self.is_folded = True
-                self.status = 'fold'
+                self.status = "fold"
                 return {"action": "fold"}
 
             if len(current_table) > 5:
                 self.is_folded = True
-                self.status = 'fold'
+                self.status = "fold"
                 return {"action": "fold"}
 
             try:
@@ -141,29 +141,29 @@ class CPUPlayer(Player):
                 hand_strength = (MAX_HAND_RANK - rank) / (MAX_HAND_RANK - 1)
             except Exception as e:
                 self.is_folded = True
-                self.status = 'fold'
+                self.status = "fold"
                 return {"action": "fold"}
 
             if to_call > self.chips * 0.15 and hand_strength < 0.4:
                 self.is_folded = True
-                self.status = 'fold'
+                self.status = "fold"
                 return {"action": "fold"}
             elif hand_strength > 0.8 and self.chips > 100:
                 raise_amount = min(50, self.chips // 4)
-                self.status = 'raise'
+                self.status = "raise"
                 return {"action": "raise", "amount": raise_amount}
             elif hand_strength > 0.5 or to_call <= self.chips * 0.05:
-                self.status = 'call'
+                self.status = "call"
                 return {"action": "call"}
             else:
                 self.is_folded = True
-                self.status = 'fold'
+                self.status = "fold"
                 return {"action": "fold"}
         else:
             if to_call <= self.chips * 0.1:
-                self.status = 'call'
+                self.status = "call"
                 return {"action": "call"}
             else:
                 self.is_folded = True
-                self.status = 'fold'
+                self.status = "fold"
                 return {"action": "fold"}

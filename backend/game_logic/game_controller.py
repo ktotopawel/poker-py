@@ -19,23 +19,36 @@ class PokerGame:
         self.big_blind = big_blind
         self.is_preflop = False
         self.evaluator = Evaluator()
-        self.status = 'waiting'
-        
+        self.phase = "waiting"
+        self.round_number = 0
+        self.waiting_for_player - False
+        self.round_actions = []
+        self.last_round_result = None
+
+        self.all_players[0].is_dealer = True
+
     def get_player_hand(self):
         player_cards = []
         for card in self.player.hand:
             player_cards.append(Card.print_pretty_card(card))
         return player_cards
-    
+
     def get_bots_state(self):
         bots_state = {}
-        
+
         for bot in self.cpu_players:
             bots_state[bot.name] = bot.get_state()
         return bots_state
-    
+
     def get_game_state(self):
-        return {"table": Card.print_pretty_cards(self.table_cards), "bank_chips": self.bank_chips, "current_stake": self.current_stake, "status": self.status, "bots_state": self.get_bots_state(), "player_hand": Card.print_pretty_cards(self.player.hand)}
+        return {
+            "table": Card.print_pretty_cards(self.table_cards),
+            "bank_chips": self.bank_chips,
+            "current_stake": self.current_stake,
+            "status": self.status,
+            "bots_state": self.get_bots_state(),
+            "player_hand": Card.print_pretty_cards(self.player.hand),
+        }
 
     def add_cpu(self, cpu_num):
         cpu_arr = []
