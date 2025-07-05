@@ -1,5 +1,5 @@
-from deck import Deck
-from player import Player, CPUPlayer
+from game_logic.deck import Deck
+from game_logic.player import Player, CPUPlayer
 from typing import List
 from treys import Card, Evaluator
 import re
@@ -9,10 +9,9 @@ class PokerGame:
     def __init__(self, player_name, custom_chips, cpu_num, big_blind=50):
         self.deck = Deck()
         self.player = Player(
-            name=player_name, chips=custom_chips if custom_chips else None
+            name=player_name, chips=custom_chips if custom_chips is not None else 1000
         )
         self.table_cards = []
-        self.player.is_dealer = True
         self.cpu_players = self.add_cpu(cpu_num=cpu_num)
         self.all_players = [self.player] + self.cpu_players
         self.bank_chips = 0
@@ -20,6 +19,23 @@ class PokerGame:
         self.big_blind = big_blind
         self.is_preflop = False
         self.evaluator = Evaluator()
+        self.status = 'waiting'
+        
+    def get_player_hand(self):
+        player_cards = []
+        for card in self.player.hand:
+            player_cards.append(Card.print_pretty_card(card))
+        return player_cards
+    
+    def get_bots_state(self):
+        bots_state = {}
+        
+        for bot in self.cpu_players:
+            bots_state[bot.name] = bot.get_state()
+        return bots_state
+    
+    def get_game_state(self):
+        return {"table": Card.print_pretty_cards(self.table_cards), "bank_chips": self.bank_chips, "current_stake": self.current_stake, "status": self.status, "bots_state": self.get_bots_state(), "player_hand": Card.print_pretty_cards(self.player.hand)}
 
     def add_cpu(self, cpu_num):
         cpu_arr = []
