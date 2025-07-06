@@ -82,9 +82,9 @@ class PokerGame:
             cpu_arr.append(CPUPlayer(name=f"CPU{i}", chips=custom_chips))
         return cpu_arr
 
-    def receive_bet(self, bet):
-        if self.current_stake < bet:
-            self.current_stake = bet
+    def receive_bet(self, bet, player_new_stake):
+        if self.current_stake < player_new_stake:
+            self.current_stake = player_new_stake
         self.bank_chips += bet
 
     def deal_cards(self):
@@ -131,17 +131,6 @@ class PokerGame:
 
         if self.phase == Phase.PREFLOP:
             self.handle_blinds()
-            dealer_index = next(
-                i for i, p in enumerate(self.all_players) if p.is_dealer
-            )
-            small_blind_player = self.all_players[
-                (dealer_index + 1) % len(self.all_players)
-            ]
-            big_blind_player = self.all_players[
-                (dealer_index + 2) % len(self.all_players)
-            ]
-            self.acted_players.add(small_blind_player)
-            self.acted_players.add(big_blind_player)
 
         return self.process_bots()
 
@@ -158,9 +147,10 @@ class PokerGame:
         ]
         big_blind_player = self.all_players[(dealer_index + 2) % len(self.all_players)]
 
-        self.receive_bet(small_blind_player.bet(small_blind))
-        self.receive_bet(big_blind_player.bet(self.big_blind))
-        self.current_stake = self.big_blind
+        small_blind_bet = small_blind_player.bet(small_blind)
+        self.receive_bet(small_blind_bet, small_blind_player.stake)
+        big_blind_bet = big_blind_player.bet(self.big_blind)
+        self.receive_bet(big_blind_bet, big_blind_player.stake)
 
     def get_betting_order(self, next_player=None):
         dealer_index = 0
@@ -184,14 +174,12 @@ class PokerGame:
         )
 
     def process_bots(self, next_player=None):
-        if next_player is None:
-            self.acted_players.clear()
-
         betting_order = self.get_betting_order(next_player)
 
         if len(betting_order) <= 1:
             return self.proceed_to_next_phase()
 
+        someone_acted = False
         for player in betting_order:
             if player in self.acted_players:
                 continue
@@ -209,17 +197,29 @@ class PokerGame:
                     self.acted_players.clear()
 
                 self.acted_players.add(player)
+                someone_acted = True
 
                 if self.is_betting_complete():
                     return self.proceed_to_next_phase()
 
             else:
+                # Human player's turn
                 return self.handle_player_turn()
 
         if self.is_betting_complete():
             return self.proceed_to_next_phase()
-        else:
+        elif someone_acted:
+            # If a bot acted, continue processing from the beginning
             return self.process_bots()
+        else:
+            # No one acted - check if human player needs to act
+            active_players = [
+                p for p in self.all_players if not p.is_folded and not p.game_over
+            ]
+            if self.player in active_players and self.player not in self.acted_players:
+                return self.handle_player_turn()
+            else:
+                return {"success": True, "game_state": self.get_game_state()}
 
     def is_betting_complete(self):
         active_players = [
@@ -247,10 +247,12 @@ class PokerGame:
         action = decision["action"]
 
         if action == "raise":
-            self.receive_bet(bot.bet(decision["amount"]))
+            bet_amount = bot.bet(decision["amount"])
+            self.receive_bet(bet_amount, bot.stake)
 
         if action == "call":
-            self.receive_bet(bot.bet(decision["amount"]))
+            bet_amount = bot.bet(decision["amount"])
+            self.receive_bet(bet_amount, bot.stake)
 
         return action
 
@@ -296,16 +298,8 @@ class PokerGame:
         in_game_players = [p for p in self.all_players if not p.game_over]
         if len(in_game_players) <= 1:
             self.game_over = True
-            return {"success": True, "game_state": self.get_game_state()}
-        else:
-            active_players = [
-                p for p in self.all_players if not p.game_over and not p.is_folded
-            ]
-            if len(active_players) == 1:
-                active_players[0].chips += self.bank_chips
-                return {"success": True, "game_state": self.get_game_state()}
-            else:
-                return self.handle_showdown(active_players)
+
+        return {"success": True, "game_state": self.get_game_state()}
 
     def handle_showdown(self, active_players):
         final_scores = []
@@ -318,7 +312,9 @@ class PokerGame:
         winner = winner_data["player"]
 
         winner.chips += self.bank_chips
-        return {"success": True, "game_state": self.get_game_state()}
+        self.bank_chips = 0
+
+        return self.handle_end_of_round()
 
     def player_action(self, action, amount):
         active_players = [
@@ -328,19 +324,24 @@ class PokerGame:
         player_turn = self.player.take_turn(self.current_stake, action, amount)
 
         if player_turn["action"] == "call" or player_turn["action"] == "raise":
-            self.receive_bet(self.player.bet(player_turn["amount"]))
+            bet_amount = self.player.bet(player_turn["amount"])
+            self.receive_bet(bet_amount, self.player.stake)
 
         if player_turn["action"] == "raise":
             self.acted_players.clear()
+            self.acted_players.add(self.player)
+            # After a raise, restart betting from the beginning
+            self.waiting_for_player = False
+            return self.process_bots()
+        else:
+            self.acted_players.add(self.player)
+            self.waiting_for_player = False
 
-        self.acted_players.add(self.player)
-        self.waiting_for_player = False
+            next_player = None
+            if player_index + 1 < len(active_players):
+                next_player = active_players[player_index + 1]
 
-        next_player = None
-        if player_index + 1 < len(active_players):
-            next_player = active_players[player_index + 1]
-
-        return self.process_bots(next_player)
+            return self.process_bots(next_player)
 
 
 if __name__ == "__main__":

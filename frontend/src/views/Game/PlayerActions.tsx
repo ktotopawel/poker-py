@@ -6,6 +6,7 @@ import { updateGameState } from "../../store/slices/gameState.slice";
 const PlayerActions = () => {
   const toCall = useAppSelector((state) => state.game.call_amount);
   const gameId = useAppSelector((state) => state.game.game_id);
+  const gamePhase = useAppSelector((state) => state.game.phase);
   const dispatch = useAppDispatch();
 
   const handleCheckAndCall = () => {
@@ -46,38 +47,76 @@ const PlayerActions = () => {
       });
   };
 
+  const handleShowdown = () => {};
+
+  const handleStartNextRound = () => {
+    axios
+      .get(`http://localhost:5000/api/game/${gameId}/start-round`)
+      .then((res) => {
+        const gameState = res.data.game_state;
+        dispatch(updateGameState(gameState));
+      });
+  };
+
   return (
     <div className="flex gap-2 justify-center mb-4 ">
-      <Button
-        onClick={() => {
-          handleCheckAndCall();
-        }}
-        className={
-          "bg-surface py-2 px-4 text-2xl shadow-velvet-red shadow-sm cursor-pointer rounded-xl"
-        }
-      >
-        Check/Call
-      </Button>
-      <Button
-        onClick={() => {
-          handleFold();
-        }}
-        className={
-          "bg-surface py-2 px-4 text-2xl shadow-velvet-red shadow-sm cursor-pointer rounded-xl"
-        }
-      >
-        Fold
-      </Button>
-      <Button
-        onClick={() => {
-          handleRaise();
-        }}
-        className={
-          "bg-surface py-2 px-4 text-2xl shadow-velvet-red shadow-sm cursor-pointer rounded-xl"
-        }
-      >
-        Raise
-      </Button>
+      {gamePhase === "showdown" ? (
+        <>
+          <Button
+            onClick={() => {
+              handleShowdown();
+            }}
+          >
+            Reveal cards
+          </Button>
+        </>
+      ) : gamePhase === "complete" ? (
+        <>
+          <Button
+            onClick={() => {
+              handleStartNextRound();
+            }}
+            className={
+              "bg-surface py-2 px-4 text-2xl shadow-velvet-red shadow-sm cursor-pointer rounded-xl"
+            }
+          >
+            Start Next Round
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button
+            onClick={() => {
+              handleCheckAndCall();
+            }}
+            className={
+              "bg-surface py-2 px-4 text-2xl shadow-velvet-red shadow-sm cursor-pointer rounded-xl"
+            }
+          >
+            Check/Call
+          </Button>
+          <Button
+            onClick={() => {
+              handleFold();
+            }}
+            className={
+              "bg-surface py-2 px-4 text-2xl shadow-velvet-red shadow-sm cursor-pointer rounded-xl"
+            }
+          >
+            Fold
+          </Button>
+          <Button
+            onClick={() => {
+              handleRaise();
+            }}
+            className={
+              "bg-surface py-2 px-4 text-2xl shadow-velvet-red shadow-sm cursor-pointer rounded-xl"
+            }
+          >
+            Raise
+          </Button>
+        </>
+      )}
     </div>
   );
 };

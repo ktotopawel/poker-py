@@ -47,7 +47,9 @@ class Player:
                 return {"action": "check"}
 
         elif action == "raise":
-            return {"action": action, "amount": amount}
+            # Amount should be the total stake, not additional chips
+            additional_bet = amount - self.stake
+            return {"action": action, "amount": additional_bet}
 
         else:
             return {"error": "invalid action"}
@@ -93,7 +95,6 @@ class CPUPlayer(Player):
         if len(current_table) == 0:
             if to_call <= self.chips * 0.1:
                 self.status = "call"
-
                 return {"action": "call", "amount": to_call}
             else:
                 self.is_folded = True
@@ -125,8 +126,9 @@ class CPUPlayer(Player):
                 return {"action": "fold"}
             elif hand_strength > 0.8 and self.chips > 100:
                 raise_amount = min(50, self.chips // 4)
+                total_bet = to_call + raise_amount
                 self.status = "raise"
-                return {"action": "raise", "amount": raise_amount}
+                return {"action": "raise", "amount": total_bet}
             elif hand_strength > 0.5 or to_call <= self.chips * 0.05:
                 self.status = "call"
                 return {"action": "call", "amount": to_call}
