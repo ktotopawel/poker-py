@@ -52,6 +52,11 @@ const Bot = ({ botName, bot }: IBot) => {
             {botResult?.is_winner && (
               <p className="text-gold-metallic">WINNER!</p>
             )}
+            {botResult?.hand_description && (
+              <p className="mt-2">
+                {botName} got: {botResult.hand_description}
+              </p>
+            )}
           </div>
         )}
         <div className="w-52 h-full flex flex-col gap-2">
@@ -59,15 +64,15 @@ const Bot = ({ botName, bot }: IBot) => {
           <div className="flex flex-col justify-between flex-auto">
             <div className="text-xl flex gap-1">
               <h4>Bot action:</h4>
-              <p className="text-accent">{bot.status}</p>
+              <p className="text-action">{bot.status}</p>
             </div>
             <div className="text-xl flex gap-1">
               <h4>Chips: </h4>
-              <p>{bot.chips}</p>
+              <p className="text-chip-red">{bot.chips}</p>
             </div>
             <div className="text-xl flex gap-1">
               <h4>Stake:</h4>
-              <p>{bot.stake}</p>
+              <p className="text-accent">{bot.stake}</p>
             </div>
           </div>
         </div>

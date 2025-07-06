@@ -1,7 +1,3 @@
-interface IInputField {
-  lab;
-}
-
 const InputField = () => {
   return (
     <label htmlFor="Email">
