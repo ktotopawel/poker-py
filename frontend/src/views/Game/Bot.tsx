@@ -8,7 +8,6 @@ interface IBot {
 }
 
 const Bot = ({ botName, bot }: IBot) => {
-  const gamePhase = useAppSelector((state) => state.game.phase);
   const showdownResult = useAppSelector((state) => state.game.showdown_results);
 
   let botResult: PlayerResults | undefined = undefined;
@@ -37,7 +36,20 @@ const Bot = ({ botName, bot }: IBot) => {
       <div>
         {cards[0] !== "" && cards[1] !== "" && (
           <div>
-            <p>Cards for {botName}:</p>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <p>Cards for {botName}:</p>
+              {botResult?.is_winner && (
+                <p
+                  style={{
+                    color: "#d4af37",
+                    fontWeight: "bold",
+                    fontSize: "14px",
+                  }}
+                >
+                  WINNER!
+                </p>
+              )}
+            </div>
             {cards.map((card, index) => (
               <img
                 src={card}
