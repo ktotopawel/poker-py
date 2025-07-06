@@ -2,6 +2,7 @@
 
 @theme {
   --color-background: #0e0e10;
+  --color-modal-background: #1a1a1d;
   --color-surface: #1c1c1f;
   --color-card: #2a2a2e;
   --color-border: #3a3a3f;
@@ -80,4 +81,5 @@
 
 html {
   font-family: "Ubuntu", "Roboto", sans-serif;
+  color: var(--color-text);
 }

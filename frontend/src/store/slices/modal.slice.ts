@@ -8,8 +8,8 @@ export interface ModalState {
 }
 
 const initialState: ModalState = {
-  isOpen: false,
-  modalType: null,
+  isOpen: true,
+  modalType: "NEW_GAME",
   modalProps: null,
 };
 
