@@ -35,6 +35,28 @@ const Bot = ({ botName, bot }: IBot) => {
   return (
     <>
       <div>
+        {cards[0] !== "" && cards[1] !== "" && (
+          <div
+            style={{ border: "2px solid lime", padding: "4px", margin: "2px" }}
+          >
+            <p style={{ color: "lime", fontSize: "12px" }}>
+              Cards for {botName}:
+            </p>
+            {cards.map((card, index) => (
+              <img
+                src={card}
+                alt={`${botName}'s card ${index + 1}`}
+                key={index}
+                style={{
+                  width: "40px",
+                  height: "56px",
+                  border: "1px solid red",
+                }}
+              />
+            ))}
+          </div>
+        )}
+
         {gamePhase === "showdown" && botResult && (
           <>
             <div>
