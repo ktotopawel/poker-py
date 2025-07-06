@@ -20,7 +20,7 @@ poker-py/
 │   │   ├── game_controller.py  # Main game logic
 │   │   ├── player.py       # Player and CPU classes
 │   │   └── deck.py         # Card deck implementation
-│   └── requirements.txt    # Python dependencies (needs to be populated)
+│   └── requirements.txt    # Python dependencies
 ├── frontend/               # React TypeScript app
 │   ├── src/
 │   │   ├── views/          # React components
@@ -57,8 +57,7 @@ poker-py/
 3. **Install dependencies**
 
    ```bash
-   pip install flask flask-cors treys
-   pip freeze > requirements.txt  # Update requirements file
+   pip install -r requirements.txt
    ```
 
 4. **Run the Flask server**
@@ -152,7 +151,6 @@ await axios.post(`/api/game/${gameId}/action`, {
 
 - [ ] **🐳 Docker Setup**: Create Dockerfiles and docker-compose.yml for easy deployment
 - [ ] **🎨 UI Enhancement**: Improve visual design, add animations, better card graphics
-- [ ] **📝 Requirements File**: Populate backend/requirements.txt with all dependencies
 - [ ] **🎮 Custom Raise Amounts**: Allow players to choose raise amounts instead of fixed 100
 
 ### Medium Priority
@@ -181,7 +179,7 @@ await axios.post(`/api/game/${gameId}/action`, {
 - **React 19**: UI framework
 - **TypeScript**: Type safety
 - **Redux Toolkit**: State management
-- **Tailwind CSS**: Styling (assumed based on modern React setup)
+- **Tailwind CSS**: Styling
 - **Axios**: HTTP client
 
 ### Development Tools
@@ -204,7 +202,8 @@ await axios.post(`/api/game/${gameId}/action`, {
 **Backend not starting:**
 
 - Ensure Python 3.11+ is installed
-- Install dependencies: `pip install flask flask-cors treys`
+- Activate virtual environment: `source venv/bin/activate`
+- Install dependencies: `pip install -r requirements.txt`
 - Verify port 5000 is available
 
 **Frontend not connecting to backend:**
@@ -212,11 +211,6 @@ await axios.post(`/api/game/${gameId}/action`, {
 - Ensure backend is running on port 5000
 - Check if both servers are running simultaneously
 - Verify API endpoints are accessible at http://localhost:5000
-
-**Missing dependencies:**
-
-- Backend: Run `pip install flask flask-cors treys` in the backend directory
-- Frontend: Run `npm install` in the frontend directory
 
 ---
 
