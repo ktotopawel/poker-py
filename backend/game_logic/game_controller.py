@@ -27,7 +27,10 @@ class PokerGame:
             name=player_name, chips=custom_chips if custom_chips is not None else 1000
         )
         self.table_cards = []
-        self.cpu_players = self.add_cpu(cpu_num=cpu_num)
+        self.cpu_players = self.add_cpu(
+            cpu_num=cpu_num,
+            custom_chips=custom_chips if custom_chips is not None else 1000,
+        )
         self.all_players = [self.player] + self.cpu_players
         self.bank_chips = 0
         self.current_stake = 0
@@ -57,7 +60,7 @@ class PokerGame:
 
     def get_game_state(self):
         return {
-            "phase": self.phase,
+            "phase": self.phase.value,
             "round_number": self.round_number,
             "table_cards": [Card.int_to_pretty_str(card) for card in self.table_cards],
             "bank_chips": self.bank_chips,
@@ -72,10 +75,10 @@ class PokerGame:
             "game_over": self.game_over,
         }
 
-    def add_cpu(self, cpu_num):
+    def add_cpu(self, cpu_num, custom_chips):
         cpu_arr = []
         for i in range(cpu_num):
-            cpu_arr.append(CPUPlayer(name=f"CPU{i}"))
+            cpu_arr.append(CPUPlayer(name=f"CPU{i}", chips=custom_chips))
         return cpu_arr
 
     def receive_bet(self, bet):

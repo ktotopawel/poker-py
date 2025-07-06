@@ -1,4 +1,3 @@
-
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
@@ -46,7 +45,7 @@ def initGame():
     )
 
 
-@app.route("api/game/<int:game_id>/start-round", methods=["GET"])
+@app.route("/api/game/<int:game_id>/start-round", methods=["GET"])
 def start_round(game_id):
     game = games.get(game_id)
     if not game:

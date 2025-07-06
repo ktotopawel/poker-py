@@ -59,7 +59,7 @@ class Player:
 
 
 class CPUPlayer(Player):
-    def __init__(self, name, chips=1000):
+    def __init__(self, name, chips=10000):
         super().__init__(name, chips)
         self.evaluator = Evaluator()
         self.status = ""
