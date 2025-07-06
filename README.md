@@ -189,12 +189,6 @@ await axios.post(`/api/game/${gameId}/action`, {
 - **Vite**: Build tool
 - **ESLint**: Code linting
 
-## 🔍 Current Setup Issues to Fix
-
-1. **Backend requirements.txt is empty** - needs to be populated with dependencies
-2. **No Docker configuration** - needs Dockerfiles and compose file
-3. **Basic UI** - could benefit from improved styling and animations
-
 ## 🤝 Contributing
 
 1. Fork the repository
