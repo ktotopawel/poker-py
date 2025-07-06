@@ -1,5 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
-import type { CPUState, GamePhases, PlayerState } from "../../types/gameState";
+import type {
+  CPUState,
+  GamePhases,
+  PlayerResults,
+  PlayerState,
+} from "../../types/gameState";
 
 export interface GameState {
   game_id: number;
@@ -16,6 +21,7 @@ export interface GameState {
   round_number: number;
   table_cards: string[];
   waiting_for_player: boolean;
+  showdown_results: PlayerResults[] | null;
 }
 
 const initialState: GameState = {
@@ -47,6 +53,7 @@ const initialState: GameState = {
   round_number: 0,
   table_cards: [],
   waiting_for_player: false,
+  showdown_results: null,
 };
 
 export const gameSlice = createSlice({

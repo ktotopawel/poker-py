@@ -85,7 +85,10 @@ const NewGameModal = () => {
           </h1>
           <p className="text-2xl">
             This is a simple poker app, connecting a python backend API with a
-            frontend web app.
+            frontend web app. Basic game working, features left to implement:
+            <p>- Custom bot amount.</p> <p>- Custom chips/BB.</p>{" "}
+            <p>- Raise amount choice.</p>{" "}
+            <p>- Animations, bot choice display.</p>
           </p>
         </div>
       </div>

@@ -42,6 +42,7 @@ class PokerGame:
         self.waiting_for_player = False
         self.game_over = False
         self.acted_players = set()
+        self.showdown_results = None
 
         self.all_players[0].is_dealer = True
 
@@ -70,6 +71,7 @@ class PokerGame:
             "call_amount": max(0, self.current_stake - self.player.stake),
             "can_check": self.current_stake == self.player.stake,
             "game_over": self.game_over,
+            "showdown_results": self.showdown_results,
             "player": {
                 **self.player.get_state(),
                 "hand": [Card.int_to_pretty_str(card) for card in self.player.hand],
@@ -98,6 +100,7 @@ class PokerGame:
         self.table_cards = []
         self.last_round_result = None
         self.waiting_for_player = False
+        self.showdown_results = None
 
         for player in self.all_players:
             player.hand = []
@@ -303,16 +306,36 @@ class PokerGame:
 
     def handle_showdown(self, active_players):
         final_scores = []
+        showdown_results = []
 
         for player in active_players:
             score = self.evaluator.evaluate(player.hand, self.table_cards)
+            hand_info = self.get_hand_description(score, player.hand, self.table_cards)
+
+            player_result = {
+                "name": player.name,
+                "hand": [Card.int_to_pretty_str(card) for card in player.hand],
+                "score": score,
+                "hand_description": hand_info["name"],
+                "hand_strength": hand_info["strength"],
+                "is_winner": False,
+            }
+
             final_scores.append({"player": player, "score": score})
+            showdown_results.append(player_result)
 
-        winner_data = min(final_scores, key=lambda x: x["score"])
-        winner = winner_data["player"]
+        winner_score = min(final_scores, key=lambda x: x["score"])["score"]
+        winners = [item for item in final_scores if item["score"] == winner_score]
 
-        winner.chips += self.bank_chips
+        chips_per_winner = self.bank_chips // len(winners)
+        for winner_data in winners:
+            winner_data["player"].chips += chips_per_winner
+            for result in showdown_results:
+                if result["name"] == winner_data["player"].name:
+                    result["is_winner"] = True
+
         self.bank_chips = 0
+        self.showdown_results = showdown_results
 
         return self.handle_end_of_round()
 
@@ -330,7 +353,6 @@ class PokerGame:
         if player_turn["action"] == "raise":
             self.acted_players.clear()
             self.acted_players.add(self.player)
-            # After a raise, restart betting from the beginning
             self.waiting_for_player = False
             return self.process_bots()
         else:
@@ -342,6 +364,14 @@ class PokerGame:
                 next_player = active_players[player_index + 1]
 
             return self.process_bots(next_player)
+
+    def get_hand_description(self, score, hand, board):
+        rank_class = self.evaluator.get_rank_class(score)
+        class_string = self.evaluator.class_to_string(rank_class)
+
+        hand_percentage = 1.0 - (score - 1) / 7461.0
+
+        return {"name": class_string, "strength": round(hand_percentage * 100, 1)}
 
 
 if __name__ == "__main__":

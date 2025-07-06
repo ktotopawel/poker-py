@@ -3,8 +3,8 @@ import { getCardImagePath } from "../../utils/cardMapper";
 
 const PlayerCards = () => {
   const playerHand = useAppSelector((state) => state.game.player.hand);
+  const isFolded = useAppSelector((state) => state.game.player.is_folded);
 
-  // Return null if no hand or hand is empty or doesn't have 2 cards
   if (
     !playerHand ||
     playerHand.length < 2 ||
@@ -29,12 +29,16 @@ const PlayerCards = () => {
   return (
     <div className=" w-full flex justify-center ">
       <img
-        className="-rotate-2 translate-x-2"
+        className={`-rotate-2 translate-x-2 transition-opacity duration-200 ${
+          isFolded ? "opacity-25" : ""
+        }`}
         src={cardPaths[0]}
         alt="Player card 1"
       />
       <img
-        className="rotate-2 -translate-x-2"
+        className={`rotate-2 -translate-x-2 transition-opacity duration-200  ${
+          isFolded ? "opacity-25" : ""
+        }`}
         src={cardPaths[1]}
         alt="Player card 2"
       />

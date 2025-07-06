@@ -13,10 +13,18 @@ export interface CPUState extends PlayerState {
 
 export type GamePhases =
   | "waiting"
-  | "complete"
   | "preflop"
   | "flop"
   | "turn"
   | "river"
   | "showdown"
   | "complete";
+
+export interface PlayerResults {
+  name: string;
+  hand: string[];
+  score: number;
+  hand_description: string;
+  hand_strength: number;
+  is_winner: boolean;
+}
