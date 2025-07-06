@@ -47,7 +47,6 @@ class Player:
                 return {"action": "check"}
 
         elif action == "raise":
-            # Amount should be the total stake, not additional chips
             additional_bet = amount - self.stake
             return {"action": action, "amount": additional_bet}
 
