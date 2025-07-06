@@ -4,6 +4,7 @@ export interface PlayerState {
   is_dealer: boolean;
   is_folded: boolean;
   stake: number;
+  hand?: string[];
 }
 
 export interface CPUState extends PlayerState {

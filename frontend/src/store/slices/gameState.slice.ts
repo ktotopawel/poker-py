@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { CPUState, GamePhases, PlayerState } from "../../types/gameState";
 
 export interface GameState {
+  game_id: number;
   bank_chips: number;
   bots_state: {
     [key: string]: CPUState;
@@ -18,6 +19,7 @@ export interface GameState {
 }
 
 const initialState: GameState = {
+  game_id: 0,
   bank_chips: 0,
   bots_state: {
     CPU0: {
@@ -40,6 +42,7 @@ const initialState: GameState = {
     is_folded: false,
     is_dealer: false,
     stake: 0,
+    hand: [],
   },
   round_number: 0,
   table_cards: [],
@@ -49,10 +52,18 @@ const initialState: GameState = {
 export const gameSlice = createSlice({
   name: "game",
   initialState,
-  reducers: {},
+  reducers: {
+    setGameId: (state, action) => {
+      state.game_id = action.payload;
+    },
+    updateGameState: (state, action) => {
+      const currentGameId = state.game_id;
+      Object.assign(state, action.payload);
+      state.game_id = currentGameId;
+    },
+  },
 });
 
-// eslint-disable-next-line no-empty-pattern
-export const {} = gameSlice.actions;
+export const { setGameId, updateGameState } = gameSlice.actions;
 
 export default gameSlice.reducer;
