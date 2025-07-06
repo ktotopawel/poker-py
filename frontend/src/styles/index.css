@@ -1,1 +1,83 @@
 @import "tailwindcss";
+
+@theme {
+  --color-background: #0e0e10;
+  --color-surface: #1c1c1f;
+  --color-card: #2a2a2e;
+  --color-border: #3a3a3f;
+  --color-text: #e2e2e5;
+  --color-muted: #a0a0a5;
+  --color-heading: #ffd700;
+  --color-accent: #ffd700;
+  --color-action: #00c896;
+  --color-danger: #e63946;
+  --color-info: #3abff8;
+  --color-warning: #fbbf24;
+  --color-success: #28a745;
+  --color-spade: #ffffff;
+  --color-club: #00ff88;
+  --color-heart: #ff4d6d;
+  --color-diamond: #63c5da;
+  --color-felt-green: #1e5c3a;
+  --color-roulette-red: #b30000;
+  --color-roulette-black: #222222;
+  --color-chip-white: #eeeeee;
+  --color-chip-red: #d72638;
+  --color-chip-blue: #285a8f;
+  --color-chip-green: #378d4d;
+  --color-chip-black: #080808;
+  --color-chip-purple: #7b2f8f;
+  --color-gold-metallic: #d4af37;
+  --color-dim-light: #505050;
+  --color-velvet-red: #8b0000;
+  --color-gold-leaf: #cfb53b;
+
+  --font-sans: "Ubuntu", "Roboto", sans-serif;
+  --font-ubuntu: "Ubuntu", sans-serif;
+  --font-roboto: "Roboto", sans-serif;
+  --font-iransans: "iransans", sans-serif;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url("../assets/fonts/Ubuntu-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url("../assets/fonts/Ubuntu-Italic.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url("../assets/fonts/Ubuntu-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ubuntu";
+  src: url("../assets/fonts/Ubuntu-BoldItalic.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("../assets/fonts/Roboto.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+html {
+  font-family: "Ubuntu", "Roboto", sans-serif;
+}
