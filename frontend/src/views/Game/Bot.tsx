@@ -36,19 +36,9 @@ const Bot = ({ botName, bot }: IBot) => {
       <div>
         {cards[0] !== "" && cards[1] !== "" && (
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <div>
               <p>Cards for {botName}:</p>
-              {botResult?.is_winner && (
-                <p
-                  style={{
-                    color: "#d4af37",
-                    fontWeight: "bold",
-                    fontSize: "14px",
-                  }}
-                >
-                  WINNER!
-                </p>
-              )}
+              {botResult?.is_winner && <p>WINNER!</p>}
             </div>
             {cards.map((card, index) => (
               <img
