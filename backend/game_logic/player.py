@@ -57,6 +57,15 @@ class Player:
         for card in self.hand:
             Card.print_pretty_card(card)
 
+    def get_state(self):
+        return {
+            "chips": self.chips,
+            "stake": self.stake,
+            "is_dealer": self.is_dealer,
+            "game_over": self.game_over,
+            "is_folded": self.is_folded,
+        }
+
 
 class CPUPlayer(Player):
     def __init__(self, name, chips=10000):
@@ -67,11 +76,11 @@ class CPUPlayer(Player):
     def get_state(self):
         return {
             "chips": self.chips,
-            "status": self.status,
             "stake": self.stake,
             "is_dealer": self.is_dealer,
             "game_over": self.game_over,
             "is_folded": self.is_folded,
+            "status": self.status,
         }
 
     def bot_turn(self, current_table, pot, current_stake):

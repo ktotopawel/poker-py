@@ -65,14 +65,15 @@ class PokerGame:
             "table_cards": [Card.int_to_pretty_str(card) for card in self.table_cards],
             "bank_chips": self.bank_chips,
             "current_stake": self.current_stake,
-            "player_hand": [Card.int_to_pretty_str(card) for card in self.player.hand],
-            "player_chips": self.player.chips,
-            "player_stake": self.player.stake,
             "bots_state": self.get_bots_state(),
             "waiting_for_player": self.waiting_for_player,
             "call_amount": max(0, self.current_stake - self.player.stake),
             "can_check": self.current_stake == self.player.stake,
             "game_over": self.game_over,
+            "player": {
+                **self.player.get_state(),
+                "hand": [Card.int_to_pretty_str(card) for card in self.player.hand],
+            },
         }
 
     def add_cpu(self, cpu_num, custom_chips):
