@@ -33,8 +33,8 @@ class PokerGame:
         self.phase = Phase.WAITING
         self.round_number = 0
         self.waiting_for_player = False
-        self.last_round_result = None
         self.game_over = False
+        self.acted_players = set()
 
         self.all_players[0].is_dealer = True
 
@@ -65,7 +65,6 @@ class PokerGame:
             "waiting_for_player": self.waiting_for_player,
             "call_amount": max(0, self.current_stake - self.player.stake),
             "can_check": self.current_stake == self.player.stake,
-            "last_round_result": self.last_round_result,
             "game_over": self.game_over,
         }
 
@@ -120,8 +119,21 @@ class PokerGame:
         return self.start_betting_phase()
 
     def start_betting_phase(self):
+        self.acted_players.clear()
+
         if self.phase == Phase.PREFLOP:
             self.handle_blinds()
+            dealer_index = next(
+                i for i, p in enumerate(self.all_players) if p.is_dealer
+            )
+            small_blind_player = self.all_players[
+                (dealer_index + 1) % len(self.all_players)
+            ]
+            big_blind_player = self.all_players[
+                (dealer_index + 2) % len(self.all_players)
+            ]
+            self.acted_players.add(small_blind_player)
+            self.acted_players.add(big_blind_player)
 
         return self.process_bots()
 
@@ -142,64 +154,84 @@ class PokerGame:
         self.receive_bet(big_blind_player.bet(self.big_blind))
         self.current_stake = self.big_blind
 
-    def get_betting_order(self):
+    def get_betting_order(self, next_player=None):
         dealer_index = 0
-
-        for i, p in enumerate(self.all_players):
-            if p.is_dealer:
-                dealer_index = i
-
-        return (
-            self.all_players[(dealer_index + 1) :]
-            + self.all_players[: (dealer_index + 1)]
-        )
-
-    def process_bots(self):
         active_players = [
-            p for p in self.all_players if not p.game_over and not p.is_folded
+            p for p in self.all_players if not p.is_folded and not p.game_over
         ]
 
-        if len(active_players) <= 1:
+        if next_player and next_player in active_players:
+            next_player_index = active_players.index(next_player)
+            return (
+                active_players[next_player_index:] + active_players[:next_player_index]
+            )
+
+        for i, p in enumerate(active_players):
+            if p.is_dealer:
+                dealer_index = i
+                break
+
+        return (
+            active_players[(dealer_index + 1) :] + active_players[: (dealer_index + 1)]
+        )
+
+    def process_bots(self, next_player=None):
+        if next_player is None:
+            self.acted_players.clear()
+
+        betting_order = self.get_betting_order(next_player)
+
+        if len(betting_order) <= 1:
             return self.proceed_to_next_phase()
 
-        betting_order = self.get_betting_order()
-        max_betting_rounds = 10
-        betting_round = 0
+        for player in betting_order:
+            if player in self.acted_players:
+                continue
 
-        while betting_round < max_betting_rounds:
-            betting_round += 1
-            action_taken = False
-
-            for player in betting_order:
+            if isinstance(player, CPUPlayer):
                 if player.is_folded or player.game_over:
                     continue
 
-                if player.stake >= self.current_stake and not action_taken:
-                    continue
+                bot_decision = self.receive_bot_decision(player)
 
-                if isinstance(player, Player) and not isinstance(player, CPUPlayer):
-                    self.waiting_for_player = True
-                    return {"success": True, "game_state": self.get_game_state()}
-                else:
-                    bot_action = self.receive_bot_decision(player)
+                if bot_decision == "fold":
+                    player.is_folded = True
 
-                    if bot_action == "raise":
-                        action_taken = True
-                    elif bot_action == "fold":
-                        player.is_folded = True
+                if bot_decision == "raise":
+                    self.acted_players.clear()
 
-            active_players = [
-                p for p in self.all_players if not p.game_over and not p.is_folded
-            ]
+                self.acted_players.add(player)
 
-            if len(active_players) <= 1:
-                return self.proceed_to_next_phase()
+                if self.is_betting_complete():
+                    return self.proceed_to_next_phase()
 
-            stakes = [p.stake for p in active_players]
-            if len(set(stakes)) <= 1 and not action_taken:
-                break
+            else:
+                return self.handle_player_turn()
 
-        return self.proceed_to_next_phase()
+        if self.is_betting_complete():
+            return self.proceed_to_next_phase()
+        else:
+            return self.process_bots()
+
+    def is_betting_complete(self):
+        active_players = [
+            p for p in self.all_players if not p.is_folded and not p.game_over
+        ]
+
+        if len(active_players) <= 1:
+            return True
+
+        all_acted = all(p in self.acted_players for p in active_players)
+        stakes_equal = all(
+            p.stake == self.current_stake for p in active_players if not p.is_folded
+        )
+
+        return all_acted and stakes_equal
+
+    def handle_player_turn(self):
+        self.waiting_for_player = True
+
+        return {"success": True, "game_state": self.get_game_state()}
 
     def receive_bot_decision(self, bot: CPUPlayer):
         decision = bot.bot_turn(self.table_cards, self.bank_chips, self.current_stake)
@@ -279,6 +311,28 @@ class PokerGame:
 
         winner.chips += self.bank_chips
         return {"success": True, "game_state": self.get_game_state()}
+
+    def player_action(self, action, amount):
+        active_players = [
+            p for p in self.all_players if not p.is_folded and not p.game_over
+        ]
+        player_index = active_players.index(self.player)
+        player_turn = self.player.take_turn(self.current_stake, action, amount)
+
+        if player_turn["action"] == "call" or player_turn["action"] == "raise":
+            self.receive_bet(self.player.bet(player_turn["amount"]))
+
+        if player_turn["action"] == "raise":
+            self.acted_players.clear()
+
+        self.acted_players.add(self.player)
+        self.waiting_for_player = False
+
+        next_player = None
+        if player_index + 1 < len(active_players):
+            next_player = active_players[player_index + 1]
+
+        return self.process_bots(next_player)
 
 
 if __name__ == "__main__":

@@ -33,58 +33,24 @@ class Player:
             self.stake += bet_amount
             return bet_amount
 
-    def take_turn(self, current_stake):
+    def take_turn(self, current_stake: int, action: str, amount: int = 0):
         call_amount = current_stake - self.stake
 
-        print("1. Fold")
-        if call_amount > 0:
-            print(f"2. Call ({call_amount} chips)")
+        if action == "fold":
+            self.is_folded = True
+            return {"action": action}
+
+        elif action == "call":
+            if call_amount > 0:
+                return {"action": action, "amount": call_amount}
+            else:
+                return {"action": "check"}
+
+        elif action == "raise":
+            return {"action": action, "amount": amount}
+
         else:
-            print("2. Check")
-        print("3. Raise")
-
-        player_choice = input("Choose action (1/2/3): ").strip()
-
-        match player_choice:
-            case "1":
-                self.is_folded = True
-                return f"{self.name} folded"
-            case "2":
-                if call_amount > 0:
-                    if call_amount > self.chips:
-                        bet_amount = self.bet(self.chips)
-                        return f"{self.name} calls all-in with {bet_amount} chips"
-                    else:
-                        bet_amount = self.bet(call_amount)
-                        return f"{self.name} calls {bet_amount} chips"
-                else:
-                    return f"{self.name} checks"
-            case "3":
-                while True:
-                    try:
-                        print(f"Current bet to call: {call_amount}")
-                        print(f"Your chips: {self.chips}")
-                        raise_amount = int(input("Enter raise amount: "))
-
-                        if raise_amount <= 0:
-                            print("Raise amount must be positive")
-                            continue
-
-                        total_bet_needed = call_amount + raise_amount
-
-                        if total_bet_needed > self.chips:
-                            print("You don't have enough chips for that raise")
-                            continue
-
-                        bet_amount = self.bet(total_bet_needed)
-                        return f"{self.name} raises by {raise_amount} chips"
-
-                    except ValueError:
-                        print("Please enter a valid number")
-                        continue
-            case _:
-                print("Invalid choice, please try again")
-                return self.take_turn(current_stake)
+            return {"error": "invalid action"}
 
     def show_hand(self):
         print(f"{self.name} cards: ")
