@@ -33,37 +33,42 @@ const Bot = ({ botName, bot }: IBot) => {
   const cards = getCardsPath();
   return (
     <>
-      <div>
+      <div className="grid grid-cols-2 gap-2 bg-modal-background px-4 py-2 rounded-l-2xl">
         {cards[0] !== "" && cards[1] !== "" && (
           <div>
-            <div>
+            <div className="mb-2">
               <p>Cards for {botName}:</p>
-              {botResult?.is_winner && <p>WINNER!</p>}
             </div>
-            {cards.map((card, index) => (
-              <img
-                src={card}
-                alt={`${botName}'s card ${index + 1}`}
-                key={index}
-                style={{
-                  width: "40px",
-                  height: "56px",
-                  border: "1px solid red",
-                }}
-              />
-            ))}
+            <div className="flex gap-1">
+              {cards.map((card, index) => (
+                <img
+                  src={card}
+                  alt={`${botName}'s card ${index + 1}`}
+                  key={index}
+                  className="h-32"
+                />
+              ))}
+            </div>
+            {botResult?.is_winner && (
+              <p className="text-gold-metallic">WINNER!</p>
+            )}
           </div>
         )}
-        <div>
-          <h2>{botName}</h2>
-          <p className="text-warning">{bot.status}</p>
-          <div>
-            <h4>Chips: </h4>
-            <p>{bot.chips}</p>
-          </div>
-          <div>
-            <h4>Stake:</h4>
-            <p>{bot.stake}</p>
+        <div className="w-52 h-full flex flex-col gap-2">
+          <h2 className="text-2xl flex-none">{botName}</h2>
+          <div className="flex flex-col justify-between flex-auto">
+            <div className="text-xl flex gap-1">
+              <h4>Bot action:</h4>
+              <p className="text-accent">{bot.status}</p>
+            </div>
+            <div className="text-xl flex gap-1">
+              <h4>Chips: </h4>
+              <p>{bot.chips}</p>
+            </div>
+            <div className="text-xl flex gap-1">
+              <h4>Stake:</h4>
+              <p>{bot.stake}</p>
+            </div>
           </div>
         </div>
       </div>
