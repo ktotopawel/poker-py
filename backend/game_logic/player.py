@@ -1,5 +1,4 @@
-from treys import Evaluator, Card
-
+from treys import Card, Evaluator
 
 MAX_HAND_RANK = 7462
 
@@ -119,7 +118,7 @@ class CPUPlayer(Player):
         if len(current_table) == 0:
             if to_call <= self.chips * 0.1:
                 self.status = "call"
-                
+
                 return {"action": "call", "amount": to_call}
             else:
                 self.is_folded = True
@@ -140,7 +139,7 @@ class CPUPlayer(Player):
             try:
                 rank = self.evaluator.evaluate(self.hand, current_table)
                 hand_strength = (MAX_HAND_RANK - rank) / (MAX_HAND_RANK - 1)
-            except Exception as e:
+            except Exception:
                 self.is_folded = True
                 self.status = "fold"
                 return {"action": "fold"}

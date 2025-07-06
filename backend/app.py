@@ -1,14 +1,16 @@
-from game_logic.game_controller import PokerGame
+
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import json
+
+from game_logic.game_controller import PokerGame
 
 app = Flask(__name__)
 CORS(app)
 
 games = {}
 game_id = 0
-    
+
+
 @app.route("/api/game", methods=["POST"])
 def initGame():
     if not request.is_json:
@@ -43,32 +45,31 @@ def initGame():
         200,
     )
 
-@app.route('api/game/<int:game_id>/start-round', methods=['GET'])
+
+@app.route("api/game/<int:game_id>/start-round", methods=["GET"])
 def start_round(game_id):
     game = games.get(game_id)
     if not game:
         return jsonify({"error": "Game not found"}), 404
-    
+
     result = game.start_round()
-    return jsonify(
-        result
-    )
-    
-@app.route('/api/game/<int:game_id>/action', methods=['POST'])
+    return jsonify(result)
+
+
+@app.route("/api/game/<int:game_id>/action", methods=["POST"])
 def player_action(game_id):
     game = games.get(game_id)
-    
+
     if not game:
         return jsonify({"error": "Game not found"}), 404
-    
+
     data = request.get_json()
-    action_type = data.get('action')
-    amount = data.get('amount', 0)
-    
+    action_type = data.get("action")
+    amount = data.get("amount", 0)
+
     result = game.player_action(action_type, amount)
     return jsonify(result)
-    
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
-
