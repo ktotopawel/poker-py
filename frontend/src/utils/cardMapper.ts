@@ -61,7 +61,7 @@ export function getCardImagePath(cardString: string): string {
 
   const filename = `${rankName}_of_${suitName}.svg`;
 
-  return `/src/assets/cards/${filename}`;
+  return `/cards/${filename}`;
 }
 
 export async function importCardImage(cardString: string): Promise<string> {
