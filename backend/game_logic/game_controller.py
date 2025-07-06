@@ -2,8 +2,12 @@ from enum import Enum
 
 from treys import Card, Evaluator
 
-from game_logic.deck import Deck
-from game_logic.player import CPUPlayer, Player
+try:
+    from .deck import Deck
+    from .player import CPUPlayer, Player
+except ImportError:
+    from deck import Deck
+    from player import CPUPlayer, Player
 
 
 class Phase(Enum):
@@ -336,5 +340,13 @@ class PokerGame:
 
 
 if __name__ == "__main__":
+    import os
+    import sys
+
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    parent_dir = os.path.dirname(current_dir)
+    sys.path.insert(0, parent_dir)
+
     testGame = PokerGame("test player", 1000, 2)
-    testGame.start_round()
+    result = testGame.start_round()
+    print("Game started:", result)
