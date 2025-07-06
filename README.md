@@ -189,31 +189,6 @@ await axios.post(`/api/game/${gameId}/action`, {
 - **Vite**: Build tool
 - **ESLint**: Code linting
 
-## 🐳 Planned Docker Setup
-
-**Future Docker implementation will include:**
-
-```yaml
-# docker-compose.yml (to be created)
-version: "3.8"
-services:
-  backend:
-    build: ./backend
-    ports:
-      - "5000:5000"
-    environment:
-      - FLASK_ENV=production
-
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    depends_on:
-      - backend
-```
-
-This will enable one-command deployment: `docker-compose up`
-
 ## 🔍 Current Setup Issues to Fix
 
 1. **Backend requirements.txt is empty** - needs to be populated with dependencies
