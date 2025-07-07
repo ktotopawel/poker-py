@@ -206,16 +206,13 @@ class PokerGame:
                     return self.proceed_to_next_phase()
 
             else:
-                # Human player's turn
                 return self.handle_player_turn()
 
         if self.is_betting_complete():
             return self.proceed_to_next_phase()
         elif someone_acted:
-            # If a bot acted, continue processing from the beginning
             return self.process_bots()
         else:
-            # No one acted - check if human player needs to act
             active_players = [
                 p for p in self.all_players if not p.is_folded and not p.game_over
             ]
