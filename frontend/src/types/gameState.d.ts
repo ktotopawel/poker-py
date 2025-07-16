@@ -8,17 +8,17 @@ export interface PlayerState {
 }
 
 export interface CPUState extends PlayerState {
-  status: "call" | "fold" | "check" | "raise" | "";
+  status: 'call' | 'fold' | 'check' | 'raise' | '';
 }
 
 export type GamePhases =
-  | "waiting"
-  | "preflop"
-  | "flop"
-  | "turn"
-  | "river"
-  | "showdown"
-  | "complete";
+  | 'waiting'
+  | 'preflop'
+  | 'flop'
+  | 'turn'
+  | 'river'
+  | 'showdown'
+  | 'complete';
 
 export interface PlayerResults {
   name: string;

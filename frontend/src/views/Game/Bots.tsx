@@ -1,5 +1,5 @@
-import { useAppSelector } from "../../store/hooks";
-import Bot from "./Bot";
+import { useAppSelector } from '../../store/hooks';
+import Bot from './Bot';
 
 const Bots = () => {
   const bots = useAppSelector((state) => state.game.bots_state);

@@ -1,5 +1,5 @@
-import { useAppSelector } from "../../store/hooks";
-import { getCardImagePath } from "../../utils/cardMapper";
+import { useAppSelector } from '../../store/hooks';
+import { getCardImagePath } from '../../utils/cardMapper';
 
 const TableCards = () => {
   const tableCards = useAppSelector((state) => state.game.table_cards);

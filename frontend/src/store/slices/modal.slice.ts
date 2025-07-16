@@ -1,28 +1,33 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
+import { type ModalEnum } from '../../views/components/Modal.tsx';
 
 export interface ModalState {
   isOpen: boolean;
-  modalType: string | null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  modalProps: Record<string, any> | null;
+  modalType: ModalEnum | null;
+  modalProps: Record<string, string | number> | null;
 }
 
 const initialState: ModalState = {
-  isOpen: true,
-  modalType: "NEW_GAME",
+  isOpen: false,
+  modalType: null,
   modalProps: null,
 };
 
+type ModalPayload = {
+  type: ModalEnum;
+  props?: Record<string, string | number> | null;
+};
+
 export const modalSlice = createSlice({
-  name: "modal",
+  name: 'modal',
   initialState,
   reducers: {
-    open: (state, action) => {
+    modalOpen: (state, action: { payload: ModalPayload; type: string }) => {
       state.isOpen = true;
       state.modalType = action.payload.type;
-      state.modalProps = action.payload.props;
+      state.modalProps = action.payload.props || null;
     },
-    close: (state) => {
+    modalClose: (state) => {
       state.isOpen = false;
       state.modalType = null;
       state.modalProps = null;
@@ -30,6 +35,6 @@ export const modalSlice = createSlice({
   },
 });
 
-export const { open, close } = modalSlice.actions;
+export const { modalOpen, modalClose } = modalSlice.actions;
 
 export default modalSlice.reducer;

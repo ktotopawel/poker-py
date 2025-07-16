@@ -1,5 +1,28 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../../public/fonts/Inter.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "Inter";
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("../../public/fonts/Inter-italic.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "BebasNeue";
+  font-style: normal;
+  font-display: swap;
+  src: url("../../public/fonts/BebasNeue-Regular.ttf") format("truetype");
+}
+
 @theme {
   --color-background: #0e0e10;
   --color-modal-background: #1a1a1d;
@@ -33,53 +56,11 @@
   --color-velvet-red: #8b0000;
   --color-gold-leaf: #cfb53b;
 
-  --font-sans: "Ubuntu", "Roboto", sans-serif;
-  --font-ubuntu: "Ubuntu", sans-serif;
-  --font-roboto: "Roboto", sans-serif;
-  --font-iransans: "iransans", sans-serif;
-}
-
-@font-face {
-  font-family: "Ubuntu";
-  src: url("../assets/fonts/Ubuntu-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Ubuntu";
-  src: url("../assets/fonts/Ubuntu-Italic.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Ubuntu";
-  src: url("../assets/fonts/Ubuntu-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Ubuntu";
-  src: url("../assets/fonts/Ubuntu-BoldItalic.ttf") format("truetype");
-  font-weight: 700;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Roboto";
-  src: url("../assets/fonts/Roboto.ttf") format("truetype");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
+  --font-family-bebas: "BebasNeue", system-ui, sans-serif;
+  --font-family-sans: "Inter", system-ui, sans-serif;
 }
 
 html {
-  font-family: "Ubuntu", "Roboto", sans-serif;
   color: var(--color-text);
+  font-family: var(--font-family-sans), system-ui, sans-serif;
 }

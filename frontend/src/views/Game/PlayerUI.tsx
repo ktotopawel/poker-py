@@ -1,6 +1,6 @@
-import { useAppSelector } from "../../store/hooks";
-import PlayerActions from "./PlayerActions";
-import PlayerCards from "./PlayerCards";
+import { useAppSelector } from '../../store/hooks';
+import PlayerActions from './PlayerActions';
+import PlayerCards from './PlayerCards';
 
 const PlayerUI = () => {
   const playerState = useAppSelector((state) => state.game.player);

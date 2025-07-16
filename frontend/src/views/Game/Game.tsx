@@ -1,6 +1,6 @@
-import Bots from "./Bots";
-import PlayerUI from "./PlayerUI";
-import Table from "./Table";
+import Bots from './Bots';
+import PlayerUI from './PlayerUI';
+import Table from './Table';
 
 const Game = () => {
   return (

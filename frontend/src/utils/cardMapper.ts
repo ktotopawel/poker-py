@@ -1,25 +1,25 @@
 const suitMap: Record<string, string> = {
-  "♣": "clubs",
-  "♠": "spades",
-  "♥": "hearts",
-  "♦": "diamonds",
+  '♣': 'clubs',
+  '♠': 'spades',
+  '♥': 'hearts',
+  '♦': 'diamonds',
 };
 
 const rankMap: Record<string, string> = {
-  A: "ace",
-  "2": "2",
-  "3": "3",
-  "4": "4",
-  "5": "5",
-  "6": "6",
-  "7": "7",
-  "8": "8",
-  "9": "9",
-  T: "10",
-  "10": "10",
-  J: "jack",
-  Q: "queen",
-  K: "king",
+  A: 'ace',
+  '2': '2',
+  '3': '3',
+  '4': '4',
+  '5': '5',
+  '6': '6',
+  '7': '7',
+  '8': '8',
+  '9': '9',
+  T: '10',
+  '10': '10',
+  J: 'jack',
+  Q: 'queen',
+  K: 'king',
 };
 
 export function getCardImagePath(cardString: string): string {
@@ -27,7 +27,7 @@ export function getCardImagePath(cardString: string): string {
     throw new Error(`Invalid card string: ${cardString}`);
   }
 
-  const cleanCardString = cardString.replace(/[[\]]/g, "");
+  const cleanCardString = cardString.replace(/[[\]]/g, '');
 
   if (!cleanCardString || cleanCardString.length < 2) {
     throw new Error(`Invalid card string after cleaning: ${cardString}`);
@@ -39,13 +39,11 @@ export function getCardImagePath(cardString: string): string {
   if (cleanCardString.length === 2) {
     rank = cleanCardString[0];
     suit = cleanCardString[1];
-  } else if (cleanCardString.length === 3 && cleanCardString.startsWith("10")) {
-    rank = "10";
+  } else if (cleanCardString.length === 3 && cleanCardString.startsWith('10')) {
+    rank = '10';
     suit = cleanCardString[2];
   } else {
-    throw new Error(
-      `Unsupported card string format: ${cardString} (cleaned: ${cleanCardString})`
-    );
+    throw new Error(`Unsupported card string format: ${cardString} (cleaned: ${cleanCardString})`);
   }
 
   const rankName = rankMap[rank.toUpperCase()];
@@ -68,30 +66,16 @@ export async function importCardImage(cardString: string): Promise<string> {
   const imagePath = getCardImagePath(cardString);
 
   try {
-    const module = await import(/* @vite-ignore */ imagePath);
+    const module = (await import(/* @vite-ignore */ imagePath)) as { default: string };
     return module.default;
   } catch (error) {
-    throw new Error(`Failed to import card image for ${cardString}: ${error}`);
+    throw new Error(`Failed to import card image for ${cardString}: ${String(error)}`);
   }
 }
 
 export function getAllValidCards(): string[] {
-  const ranks = [
-    "A",
-    "2",
-    "3",
-    "4",
-    "5",
-    "6",
-    "7",
-    "8",
-    "9",
-    "T",
-    "J",
-    "Q",
-    "K",
-  ];
-  const suits = ["♣", "♠", "♥", "♦"];
+  const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K'];
+  const suits = ['♣', '♠', '♥', '♦'];
 
   const cards: string[] = [];
 

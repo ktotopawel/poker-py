@@ -1,5 +1,5 @@
 const Logo = () => {
-  return <h1 className="font-bold italic text-4xl text-accent">poker-py</h1>;
+  return <h1 className="font-bold text-4xl text-accent font-family-bebas">poker-py</h1>;
 };
 
 export default Logo;

@@ -1,5 +1,5 @@
-import GameInfo from "./GameInfo";
-import TableCards from "./TableCards";
+import GameInfo from './GameInfo';
+import TableCards from './TableCards';
 
 const Table = () => {
   return (

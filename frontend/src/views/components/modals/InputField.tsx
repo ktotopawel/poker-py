@@ -1,10 +1,7 @@
 const InputField = () => {
   return (
     <label htmlFor="Email">
-      <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-        {" "}
-        Email{" "}
-      </span>
+      <span className="text-sm font-medium text-gray-700 dark:text-gray-200"> Email </span>
 
       <input
         type="email"

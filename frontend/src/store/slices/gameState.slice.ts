@@ -1,10 +1,7 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type {
-  CPUState,
-  GamePhases,
-  PlayerResults,
-  PlayerState,
-} from "../../types/gameState";
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import type { CPUState, GamePhases, PlayerResults, PlayerState } from '../../types/gameState';
+import instance from '../../api/axiosInstance.ts';
+import type { InitReturn, StartRoundReturn } from '../../types/apiTypes.ts';
 
 export interface GameState {
   game_id: number;
@@ -22,14 +19,23 @@ export interface GameState {
   table_cards: string[];
   waiting_for_player: boolean;
   showdown_results: PlayerResults[] | null;
+
+  status: 'idle' | 'loading' | 'error';
 }
+
+export type StartGameArgs = {
+  playerName: string;
+  customChips: number;
+  cpuNum: number;
+  bigBlind: number;
+};
 
 const initialState: GameState = {
   game_id: 0,
   bank_chips: 0,
   bots_state: {
     CPU0: {
-      status: "",
+      status: '',
       chips: 0,
       game_over: true,
       is_folded: false,
@@ -41,7 +47,7 @@ const initialState: GameState = {
   can_check: false,
   current_stake: 0,
   game_over: true,
-  phase: "waiting",
+  phase: 'waiting',
   player: {
     chips: 0,
     game_over: true,
@@ -54,13 +60,44 @@ const initialState: GameState = {
   table_cards: [],
   waiting_for_player: false,
   showdown_results: null,
+
+  status: 'idle',
 };
 
+export const startGameThunk = createAsyncThunk(
+  'game/startGame',
+  async (args: StartGameArgs, { dispatch, rejectWithValue }) => {
+    const { playerName, customChips, cpuNum, bigBlind } = args;
+
+    try {
+      const response = await instance.post<InitReturn>('http://localhost:5000/api/game', {
+        username: playerName,
+        custom_chips: customChips,
+        cpu_num: cpuNum,
+        big_blind: bigBlind,
+      });
+
+      const gameId = response.data.game_id;
+      dispatch(setGameId(gameId));
+
+      const gameStateResponse = await instance.get<StartRoundReturn>(
+        `http://localhost:5000/api/game/${gameId}/start-round`
+      );
+      const gameState = gameStateResponse.data['game_state'];
+
+      dispatch(updateGameState(gameState));
+    } catch (error) {
+      console.error('Error starting game:', error);
+      return rejectWithValue('Failed to start game');
+    }
+  }
+);
+
 export const gameSlice = createSlice({
-  name: "game",
+  name: 'game',
   initialState,
   reducers: {
-    setGameId: (state, action) => {
+    setGameId: (state, action: { payload: number; type: string }) => {
       state.game_id = action.payload;
     },
     updateGameState: (state, action) => {
@@ -68,6 +105,19 @@ export const gameSlice = createSlice({
       Object.assign(state, action.payload);
       state.game_id = currentGameId;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(startGameThunk.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(startGameThunk.fulfilled, (state) => {
+        state.status = 'idle';
+      })
+      .addCase(startGameThunk.rejected, (state) => {
+        state.status = 'error';
+        console.error('Failed to start game');
+      });
   },
 });
 

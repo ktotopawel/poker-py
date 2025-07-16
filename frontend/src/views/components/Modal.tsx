@@ -1,26 +1,28 @@
-import ReactDOM from "react-dom";
-import { useAppSelector } from "../../store/hooks";
-import NewGameModal from "./modals/NewGameModal";
+import ReactDOM from 'react-dom';
+import { useAppSelector } from '../../store/hooks';
+import CustomGameModal from './modals/CustomGameModal.tsx';
 
-const modalRoot = document.getElementById("modal-root");
+const modalRoot = document.getElementById('modal-root');
 
 const getModalType = (
-  modalType: string | null,
+  modalType: ModalEnum | null,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   modalProps: Record<string, any> | null
 ) => {
   switch (modalType) {
-    case "NEW_GAME":
-      return <NewGameModal {...modalProps} />;
+    case ModalTypes.CUSTOM_GAME:
+      return <CustomGameModal {...modalProps} />;
     default:
       return null;
   }
 };
 
+const ModalTypes = {
+  CUSTOM_GAME: 'CustomGame',
+} as const;
+
 const Modal = () => {
-  const { isOpen, modalType, modalProps } = useAppSelector(
-    (state) => state.modal
-  );
+  const { isOpen, modalType, modalProps } = useAppSelector((state) => state.modal);
 
   if (!isOpen || !modalRoot) return null;
 
@@ -35,3 +37,5 @@ const Modal = () => {
 };
 
 export default Modal;
+export { ModalTypes };
+export type ModalEnum = (typeof ModalTypes)[keyof typeof ModalTypes];

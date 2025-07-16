@@ -1,6 +1,6 @@
-import { useAppSelector } from "../../store/hooks";
-import type { CPUState, PlayerResults } from "../../types/gameState";
-import { getCardImagePath } from "../../utils/cardMapper";
+import { useAppSelector } from '../../store/hooks';
+import type { CPUState, PlayerResults } from '../../types/gameState';
+import { getCardImagePath } from '../../utils/cardMapper';
 
 interface IBot {
   botName: string;
@@ -23,7 +23,7 @@ const Bot = ({ botName, bot }: IBot) => {
   }
 
   const getCardsPath = () => {
-    if (!botResult) return ["", ""];
+    if (!botResult) return ['', ''];
 
     const firstCardImagePath = getCardImagePath(botResult.hand[0]);
     const secondCardImagePath = getCardImagePath(botResult.hand[1]);
@@ -34,7 +34,7 @@ const Bot = ({ botName, bot }: IBot) => {
   return (
     <>
       <div className="grid grid-cols-2 gap-2 bg-modal-background px-4 py-2 rounded-l-2xl">
-        {cards[0] !== "" && cards[1] !== "" && (
+        {cards[0] !== '' && cards[1] !== '' && (
           <div>
             <div className="mb-2">
               <p>Cards for {botName}:</p>
@@ -49,10 +49,8 @@ const Bot = ({ botName, bot }: IBot) => {
                 />
               ))}
             </div>
-            {botResult?.is_winner && (
-              <p className="text-gold-metallic">WINNER!</p>
-            )}
-            {botResult?.hand_description && (
+            {botResult?.is_winner && <p className="text-gold-metallic">WINNER!</p>}
+            {botResult && botResult?.hand_description && (
               <p className="mt-2">
                 {botName} got: {botResult.hand_description}
               </p>

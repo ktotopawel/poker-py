@@ -1,4 +1,4 @@
-import { useAppSelector } from "../../store/hooks";
+import { useAppSelector } from '../../store/hooks';
 
 const GameInfo = () => {
   const bankChips = useAppSelector((state) => state.game.bank_chips);
