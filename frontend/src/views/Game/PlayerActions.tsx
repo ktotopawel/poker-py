@@ -1,7 +1,6 @@
 import { Button } from '@headlessui/react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import playerActionsController from '../../api/playerActionsController.ts';
-import { updateGameState } from '../../store/slices/gameState.slice.ts';
+import PlayerActionsController from '../../api/playerActionsController.ts';
 
 const PlayerActions = () => {
   const toCall = useAppSelector((state) => state.game.call_amount);
@@ -9,20 +8,15 @@ const PlayerActions = () => {
   const gamePhase = useAppSelector((state) => state.game.phase);
   const dispatch = useAppDispatch();
 
+  const playerActionsController = new PlayerActionsController(dispatch, gameId);
+
   return (
     <div className="flex gap-2 justify-center mb-4 ">
       {gamePhase === 'complete' ? (
         <>
           <Button
             onClick={() => {
-              playerActionsController
-                .startNextRound(String(gameId))
-                .then((response) => {
-                  dispatch(updateGameState(response));
-                })
-                .catch((error) => {
-                  console.error('Error processing player actions', error);
-                });
+              playerActionsController.nextRound();
             }}
             className={
               'bg-surface py-2 px-4 text-2xl shadow-velvet-red shadow-sm cursor-pointer rounded-xl'
@@ -35,14 +29,7 @@ const PlayerActions = () => {
         <>
           <Button
             onClick={() => {
-              playerActionsController
-                .checkAndCall(String(gameId), toCall)
-                .then((response) => {
-                  dispatch(updateGameState(response));
-                })
-                .catch((error) => {
-                  console.error('Error processing player actions', error);
-                });
+              playerActionsController.call(toCall);
             }}
             className={
               'bg-surface py-2 px-4 text-2xl shadow-velvet-red shadow-sm cursor-pointer rounded-xl'
@@ -52,14 +39,7 @@ const PlayerActions = () => {
           </Button>
           <Button
             onClick={() => {
-              playerActionsController
-                .fold(String(gameId))
-                .then((response) => {
-                  dispatch(updateGameState(response));
-                })
-                .catch((error) => {
-                  console.error('Error processing player actions', error);
-                });
+              playerActionsController.fold();
             }}
             className={
               'bg-surface py-2 px-4 text-2xl shadow-velvet-red shadow-sm cursor-pointer rounded-xl'
@@ -69,14 +49,8 @@ const PlayerActions = () => {
           </Button>
           <Button
             onClick={() => {
-              playerActionsController
-                .raise(String(gameId), 100)
-                .then((response) => {
-                  dispatch(updateGameState(response));
-                })
-                .catch((error) => {
-                  console.error('Error processing player actions', error);
-                });
+              //todo implement raising options
+              playerActionsController.raise(100);
             }}
             className={
               'bg-surface py-2 px-4 text-2xl shadow-velvet-red shadow-sm cursor-pointer rounded-xl'

@@ -2,7 +2,7 @@ import type { GameState } from '../store/slices/gameState.slice.ts';
 
 type ActionReturn = {
   game_state: GameState;
-  success: string;
+  success: boolean;
 };
 
 type InitReturn = {
@@ -16,5 +16,20 @@ type StartRoundReturn = {
   game_state: GameState;
   success: string;
 };
+
+export type StartGameArgs = {
+  playerName: string;
+  customChips: number;
+  cpuNum: number;
+  bigBlind: number;
+};
+
+export type PlayerActionArgs = {
+  gameId: number;
+  action: ActionType;
+  amount?: number;
+};
+
+type ActionType = 'call' | 'raise' | 'fold';
 
 export type { InitReturn, ActionReturn, StartRoundReturn };

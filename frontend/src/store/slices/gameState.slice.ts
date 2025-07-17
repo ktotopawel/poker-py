@@ -1,7 +1,13 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { CPUState, GamePhases, PlayerResults, PlayerState } from '../../types/gameState';
 import instance from '../../api/axiosInstance.ts';
-import type { InitReturn, StartRoundReturn } from '../../types/apiTypes.ts';
+import type {
+  ActionReturn,
+  InitReturn,
+  PlayerActionArgs,
+  StartGameArgs,
+  StartRoundReturn,
+} from '../../types/apiTypes.ts';
 
 export interface GameState {
   game_id: number;
@@ -22,13 +28,6 @@ export interface GameState {
 
   status: 'idle' | 'loading' | 'error';
 }
-
-export type StartGameArgs = {
-  playerName: string;
-  customChips: number;
-  cpuNum: number;
-  bigBlind: number;
-};
 
 const initialState: GameState = {
   game_id: 0,
@@ -89,6 +88,49 @@ export const startGameThunk = createAsyncThunk(
     } catch (error) {
       console.error('Error starting game:', error);
       return rejectWithValue('Failed to start game');
+    }
+  }
+);
+
+export const playerActionThunk = createAsyncThunk(
+  'game/action',
+  async (args: PlayerActionArgs, { dispatch, rejectWithValue }) => {
+    const { action, amount, gameId } = args;
+
+    try {
+      const response = await instance.post<ActionReturn>(`/api/game/${gameId}/action`, {
+        action: action,
+        amount: amount || null,
+      });
+
+      if (response.data.success === false) {
+        return rejectWithValue('Backend returned false success');
+      }
+
+      dispatch(updateGameState(response.data.game_state));
+    } catch (error) {
+      console.error('Error processing action: ', error);
+
+      return rejectWithValue('Failed to start action');
+    }
+  }
+);
+
+export const startNextRoundThunk = createAsyncThunk(
+  'game/nextRound',
+  async (gameId: number, { dispatch, rejectWithValue }) => {
+    try {
+      const response = await instance.get<ActionReturn>(`/api/game/${gameId}/start-round`);
+
+      if (response.data.success === false) {
+        return rejectWithValue('Backend returned false success');
+      }
+
+      dispatch(updateGameState(response.data.game_state));
+    } catch (error) {
+      console.error('Error processing action: ', error);
+
+      return rejectWithValue('Failed to proceed with game');
     }
   }
 );

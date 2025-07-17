@@ -1,11 +1,29 @@
 import { Button, Field, Input, Label } from '@headlessui/react';
 import { useState } from 'react';
+import { startGameThunk } from '../../../store/slices/gameState.slice.ts';
+import type { StartGameArgs } from '../../../types/apiTypes.ts';
+import { useAppDispatch } from '../../../store/hooks.ts';
 
 const CustomGameModal = () => {
   const [playerName, setPlayerName] = useState<string>('');
   const [botsAmount, setBotsAmount] = useState<number>(3);
   const [startingChips, setStartingChips] = useState<number>(10000);
   const [bigBlind, setBigBlind] = useState<number>(50);
+
+  const dispatch = useAppDispatch();
+
+  const startGame = () => {
+    const gameArgs: StartGameArgs = {
+      playerName: playerName,
+      cpuNum: botsAmount,
+      customChips: startingChips,
+      bigBlind: bigBlind,
+    };
+
+    dispatch(startGameThunk(gameArgs)).catch((err) => {
+      console.error('Error starting game', err);
+    });
+  };
 
   return (
     <div className="h-3/4 w-1/2 bg-modal-background rounded-2xl z-50 flex flex-col p-4">
@@ -77,7 +95,9 @@ const CustomGameModal = () => {
         className={
           'rounded bg-felt-green p-4  text-gold-metallic z-50 w-full self-center font-iransans font-semibold text-2xl mt-auto cursor-pointer'
         }
-        onClick={() => {}}
+        onClick={() => {
+          startGame();
+        }}
       >
         Start game
       </Button>

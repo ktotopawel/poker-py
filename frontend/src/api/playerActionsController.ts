@@ -1,33 +1,41 @@
-import instance from './axiosInstance.ts';
-import type { ActionReturn } from '../types/apiTypes.ts';
+import type { AppDispatch } from '../store/store.ts';
+import { playerActionThunk, startNextRoundThunk } from '../store/slices/gameState.slice.ts';
 
 class PlayerActionsController {
-  static async checkAndCall(gameId: string, toCall: number) {
-    const response = await instance.post<ActionReturn>(`/game/${gameId}/action`, {
-      action: 'call',
-      amount: toCall,
-    });
-    return response.data.game_state;
+  dispatch: AppDispatch;
+  gameId: number;
+
+  constructor(dispatch: AppDispatch, gameId: number) {
+    this.dispatch = dispatch;
+    this.gameId = gameId;
   }
 
-  static async fold(gameId: string) {
-    const response = await instance.post<ActionReturn>(`/game/${gameId}/action`, {
-      action: 'fold',
+  fold() {
+    this.dispatch(playerActionThunk({ gameId: this.gameId, action: 'fold' })).catch((err) => {
+      console.error(err);
     });
-    return response.data.game_state;
   }
 
-  static async raise(gameId: string, amount: number) {
-    const response = await instance.post<ActionReturn>(`/game/${gameId}/action`, {
-      action: 'raise',
-      amount,
-    });
-    return response.data.game_state;
+  call(amount: number) {
+    this.dispatch(playerActionThunk({ gameId: this.gameId, action: 'call', amount: amount })).catch(
+      (err) => {
+        console.error(err);
+      }
+    );
   }
 
-  static async startNextRound(gameId: string) {
-    const response = await instance.get<ActionReturn>(`/game/${gameId}/start-round`);
-    return response.data.game_state;
+  raise(amount: number) {
+    this.dispatch(
+      playerActionThunk({ gameId: this.gameId, action: 'raise', amount: amount })
+    ).catch((err) => {
+      console.error(err);
+    });
+  }
+
+  nextRound() {
+    this.dispatch(startNextRoundThunk(this.gameId)).catch((err) => {
+      console.error(err);
+    });
   }
 }
 
