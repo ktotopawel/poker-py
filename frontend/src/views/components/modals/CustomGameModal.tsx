@@ -77,9 +77,7 @@ const CustomGameModal = () => {
         className={
           'rounded bg-felt-green p-4  text-gold-metallic z-50 w-full self-center font-iransans font-semibold text-2xl mt-auto cursor-pointer'
         }
-        onClick={() => {
-          // toDo add logic to implement custom game start
-        }}
+        onClick={() => {}}
       >
         Start game
       </Button>
