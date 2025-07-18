@@ -7,7 +7,7 @@ import type {
   PlayerActionArgs,
   StartGameArgs,
   StartRoundReturn,
-} from '../../types/apiTypes.ts';
+} from '../../types/api.d.ts';
 
 export interface GameState {
   game_id: number;

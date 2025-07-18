@@ -1,14 +1,37 @@
-const InputField = () => {
-  return (
-    <label htmlFor="Email">
-      <span className="text-sm font-medium text-gray-700 dark:text-gray-200"> Email </span>
+import { Description, Field, Input, Label } from '@headlessui/react';
+import { useField } from 'formik';
+import * as React from 'react';
+import clsx from 'clsx';
 
-      <input
-        type="email"
-        id="Email"
-        className="mt-0.5 w-full rounded border-gray-300 shadow-sm sm:text-sm dark:border-gray-600 dark:bg-gray-900 dark:text-white"
+interface IInputField extends React.ComponentPropsWithoutRef<'input'> {
+  label: string;
+  description?: string;
+  name: string;
+  placeholder?: string;
+  type: 'text' | 'number';
+}
+
+const InputField = ({ label, description, name, type, placeholder, ...props }: IInputField) => {
+  const [field, meta] = useField({ name, ...props });
+
+  return (
+    <Field className={'flex flex-col justify-start gap-2'}>
+      <div className="gap-1">
+        <Label>{label}</Label>
+        {description && (
+          <Description className={'text-sm text-muted w-full'}>{description}</Description>
+        )}
+      </div>
+      <Input
+        {...field}
+        {...props}
+        className={clsx('border-2 border-gray-600/20 rounded-lg px-2 py-1 w-full', {
+          'border-danger': meta.error && meta.touched,
+          'appearance-none': type === 'number',
+        })}
+        placeholder={placeholder}
       />
-    </label>
+    </Field>
   );
 };
 

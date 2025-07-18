@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import CustomGameModal from './modals/CustomGameModal.tsx';
+import { modalClose } from '../../store/slices/modal.slice.ts';
 
 const modalRoot = document.getElementById('modal-root');
 
@@ -23,12 +24,18 @@ const ModalTypes = {
 
 const Modal = () => {
   const { isOpen, modalType, modalProps } = useAppSelector((state) => state.modal);
+  const dispatch = useAppDispatch();
 
   if (!isOpen || !modalRoot) return null;
 
   const content = (
     <div className="w-[100vw] h-[100vh] fixed top-0 left-0 z-50 flex justify-center items-center">
-      <div className="absolute inset-0 bg-black opacity-50"></div>
+      <div
+        className="absolute inset-0 bg-black opacity-80"
+        onClick={() => {
+          dispatch(modalClose());
+        }}
+      ></div>
       {getModalType(modalType, modalProps)}
     </div>
   );
