@@ -3,7 +3,7 @@ import TableCards from './TableCards';
 
 const Table = () => {
   return (
-    <div className="bg-felt-green border-gold-metallic border-4 h-3/4 w-3/4 rounded-full inset-shadow-sm relative">
+    <div className="relative bg-radial from-felt-green via-felt-green-middle to-felt-green-dark w-full h-3/4 rounded-full border-6 border-gold-leaf inset-shadow inset-shadow-black flex flex-col items-center">
       <GameInfo />
       <TableCards />
     </div>

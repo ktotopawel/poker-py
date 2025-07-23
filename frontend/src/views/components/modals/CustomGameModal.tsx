@@ -1,25 +1,31 @@
 import { Button } from '@headlessui/react';
-// import { startGameThunk } from '../../../store/slices/gameState.slice.ts';
-// import type { StartGameArgs } from '../../../types/api.d.ts';
-// import { useAppDispatch } from '../../../store/hooks.ts';
 import InputField from './InputField.tsx';
-import { Form, Formik, type FormikValues } from 'formik';
+import { Form, Formik, type FormikHelpers } from 'formik';
+import clsx from 'clsx';
+import { useAppDispatch } from '../../../store/hooks.ts';
+import { modalClose } from '../../../store/slices/modal.slice.ts';
+import { startGameThunk } from '../../../store/slices/gameState.slice.ts';
+import AppRoutes from '../../../utils/appRoutes.ts';
+import { useNavigate } from 'react-router-dom';
 
 const CustomGameModal = () => {
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  // const startGame = () => {
-  //   const gameArgs: StartGameArgs = {
-  //     playerName: playerName,
-  //     cpuNum: botsAmount,
-  //     customChips: startingChips,
-  //     bigBlind: bigBlind,
-  //   };
-  //
-  //   dispatch(startGameThunk(gameArgs)).catch((err) => {
-  //     console.error('Error starting game', err);
-  //   });
-  // };
+  const startGame = (formikValues: FormikValues) => {
+    const { playerName, cpuNum, customChips, bigBlind } = formikValues;
+
+    const gameArgs = {
+      playerName: playerName,
+      cpuNum: Number(cpuNum),
+      customChips: Number(customChips),
+      bigBlind: Number(bigBlind),
+    };
+
+    dispatch(startGameThunk(gameArgs)).catch((err) => {
+      console.error('Error starting game', err);
+    });
+  };
 
   const initialValues = {
     playerName: '',
@@ -28,12 +34,19 @@ const CustomGameModal = () => {
     bigBlind: '',
   };
 
-  const onSubmit = (values: FormikValues) => {
+  type FormikValues = typeof initialValues;
+
+  const onSubmit = (values: FormikValues, formikHelpers: FormikHelpers<FormikValues>) => {
+    const { resetForm } = formikHelpers;
+
+    startGame(values);
+    void navigate(AppRoutes.GAME);
+    resetForm();
     console.log(values);
   };
 
   const onReset = () => {
-    console.log('form reset success');
+    dispatch(modalClose());
   };
 
   return (
@@ -75,17 +88,19 @@ const CustomGameModal = () => {
           </div>
           <div className="flex justify-stretch gap-2 mt-4">
             <Button
-              className={
-                'cursor-pointer text-lg border-2 border-gray-600/20 rounded-lg px-2 py-1 bg-transparent flex-1/2'
-              }
+              className={clsx(
+                'cursor-pointer text-lg border-2 border-gray-600/20 rounded-lg px-2 py-1 flex-1/2 bg-white/5 transition-colors duration-200',
+                'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25 transition-opacity data-hover:bg-white/10 data-active:shadow-lg data-active:shadow-white/5'
+              )}
               type={'reset'}
             >
               Cancel
             </Button>
             <Button
-              className={
-                'cursor-pointer text-lg border-2 border-gray-600/20 rounded-lg px-2 py-1 bg-transparent flex-1/2'
-              }
+              className={clsx(
+                'cursor-pointer text-lg border-2 border-gray-600/20 rounded-lg px-2 py-1 flex-1/2 bg-white/5 transition-colors duration-200',
+                'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25 transition-opacity data-hover:bg-white/10 data-active:shadow-lg data-active:shadow-white/5'
+              )}
               type={'submit'}
             >
               Start Game

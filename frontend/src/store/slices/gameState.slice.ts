@@ -69,7 +69,7 @@ export const startGameThunk = createAsyncThunk(
     const { playerName, customChips, cpuNum, bigBlind } = args;
 
     try {
-      const response = await instance.post<InitReturn>('http://localhost:5000/api/game', {
+      const response = await instance.post<InitReturn>('/game', {
         username: playerName,
         custom_chips: customChips,
         cpu_num: cpuNum,
@@ -98,7 +98,7 @@ export const playerActionThunk = createAsyncThunk(
     const { action, amount, gameId } = args;
 
     try {
-      const response = await instance.post<ActionReturn>(`/api/game/${gameId}/action`, {
+      const response = await instance.post<ActionReturn>(`/game/${gameId}/action`, {
         action: action,
         amount: amount || null,
       });
@@ -120,7 +120,7 @@ export const startNextRoundThunk = createAsyncThunk(
   'game/nextRound',
   async (gameId: number, { dispatch, rejectWithValue }) => {
     try {
-      const response = await instance.get<ActionReturn>(`/api/game/${gameId}/start-round`);
+      const response = await instance.get<ActionReturn>(`/game/${gameId}/start-round`);
 
       if (response.data.success === false) {
         return rejectWithValue('Backend returned false success');

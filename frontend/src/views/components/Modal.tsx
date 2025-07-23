@@ -2,6 +2,7 @@ import ReactDOM from 'react-dom';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import CustomGameModal from './modals/CustomGameModal.tsx';
 import { modalClose } from '../../store/slices/modal.slice.ts';
+import { useEffect } from 'react';
 
 const modalRoot = document.getElementById('modal-root');
 
@@ -25,6 +26,23 @@ const ModalTypes = {
 const Modal = () => {
   const { isOpen, modalType, modalProps } = useAppSelector((state) => state.modal);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        dispatch(modalClose());
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [dispatch, isOpen]);
 
   if (!isOpen || !modalRoot) return null;
 

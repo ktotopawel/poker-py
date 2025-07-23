@@ -1,5 +1,6 @@
 import { useAppSelector } from '../../store/hooks';
 import { getCardImagePath } from '../../utils/cardMapper';
+import clsx from 'clsx';
 
 const PlayerCards = () => {
   const playerHand = useAppSelector((state) => state.game.player.hand);
@@ -22,18 +23,18 @@ const PlayerCards = () => {
   }
 
   return (
-    <div className=" w-full flex justify-center ">
+    <div className="w-full flex justify-center scale-66 lg:scale-100">
       <img
-        className={`-rotate-2 translate-x-2 transition-opacity duration-200 ${
-          isFolded ? 'opacity-25' : ''
-        }`}
+        className={clsx(`-rotate-2 translate-x-2 transition-opacity duration-200 `, {
+          'opacity-25': isFolded,
+        })}
         src={cardPaths[0]}
         alt="Player card 1"
       />
       <img
-        className={`rotate-2 -translate-x-2 transition-opacity duration-200  ${
-          isFolded ? 'opacity-25' : ''
-        }`}
+        className={clsx(`rotate-2 -translate-x-2 transition-opacity duration-200  `, {
+          'opacity-25': isFolded,
+        })}
         src={cardPaths[1]}
         alt="Player card 2"
       />

@@ -25,10 +25,14 @@ const InputField = ({ label, description, name, type, placeholder, ...props }: I
       <Input
         {...field}
         {...props}
-        className={clsx('border-2 border-gray-600/20 rounded-lg px-2 py-1 w-full', {
-          'border-danger': meta.error && meta.touched,
-          'appearance-none': type === 'number',
-        })}
+        className={clsx(
+          'border-2 border-gray-600/20 rounded-lg px-2 py-1 w-full bg-white/5',
+          {
+            'border-danger': meta.error && meta.touched,
+            'appearance-none': type === 'number',
+          },
+          'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25 transition-opacity'
+        )}
         placeholder={placeholder}
       />
     </Field>
